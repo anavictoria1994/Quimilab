@@ -32,7 +32,7 @@ const Navbar = () =>{
         password:"",
     });
 
-    const {login} = useAuth();
+    const {login, loginWithGoogle} = useAuth();
     const navigate = useNavigate()
 
     const [error,setError] = useState({
@@ -50,6 +50,20 @@ const Navbar = () =>{
         const regex = /^[A-Z0-9._%+-]+@[correounivalle]+\.[edu]+\.[co]/i;
         return regex.test(email);
     };
+
+    const handleSubmitGoogle =  async(event) =>{
+        try{
+            await loginWithGoogle()
+            navigate("/Administrador")
+        }catch(error){
+            setError({
+                error: true,
+                text:"Email o Contraseña incorrecto",
+            });
+            
+        }
+       
+    }
 
     const handleSubmit =  async(event) =>{
         event.preventDefault();
@@ -88,7 +102,7 @@ const Navbar = () =>{
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         QuimiLab
                     </Typography>
-                    <Button color="inherit" onClick={handleOpen}>Login</Button>
+                    <Button color="inherit" onClick={handleOpen}>Iniciar Sesion</Button>
                     <div>
                     <Modal
                         open={open}
@@ -97,7 +111,7 @@ const Navbar = () =>{
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
                             <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
-                                Login
+                                Iniciar Sesion
                             </Typography>
                             
                             <TextField margin="normal" required fullWidth name="email" label="Correo Intitucional" type="email"
@@ -107,7 +121,8 @@ const Navbar = () =>{
                             <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password"
                                 autoComplete="password" type="password" autoFocus   error={error.error} helperText={error.text} onChange={handleChange} />
 
-                            <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Entrar</Button>
+                            <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar</Button>
+                            <Button onClick={handleSubmitGoogle} id = "googlelogin" type="button" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar con Google</Button>
                                 <Grid container>
                                     <Grid item xs>
                                     <Link href="/Usuario" variant="body2" color="#FF0000">

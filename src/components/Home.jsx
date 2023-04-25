@@ -7,6 +7,7 @@ import theme from "../temaConfig";
 
 
 export function Home(){
+    
     return (
         <ThemeProvider theme ={theme}>
         <Navbar/>
