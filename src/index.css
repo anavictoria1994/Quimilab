@@ -24,7 +24,6 @@ footer {
   max-width: 1950px;
   position: absolute;
   bottom: 0; 
-  height: 190px;
 }
 
 .container--body{
@@ -37,7 +36,7 @@ footer {
   color:white;
   background-color: #FF0000;
   justify-content: space-around;
-  background-size: 1005 85%;
+ 
   
 }
 

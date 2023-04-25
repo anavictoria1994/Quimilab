@@ -1,14 +1,9 @@
-import React from "react";
+import {useState} from "react";
+import { useNavigate } from "react-router-dom";
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import imgQuimilab from '../assets/img/quimilabimg.png';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
+import { useAuth } from "../context/AuthContext";
+import imgQuimilab from "../assets/img/quimilabimg.png"
+import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, } from "@mui/material"
 
 
 
@@ -26,10 +21,58 @@ const style = {
 
   
 const Navbar = () =>{
-    
-    const [open, setOpen] = React.useState(false);
+
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false); 
+    
+    const [user, setUser] = useState({
+        email:"",
+        password:"",
+    });
+
+    const {login} = useAuth();
+    const navigate = useNavigate()
+
+    const [error,setError] = useState({
+        error: false,
+        text:"",
+        
+    });
+
+    const handleChange = ({target: {name, value}}) =>{ 
+        setUser({...user,[name]:value})
+    };
+
+    const validateEmail = (email)=> {
+        const regex = /^[A-Z0-9._%+-]+@[correounivalle]+\.[edu]+\.[co]/i;
+        return regex.test(email);
+    };
+
+    const handleSubmit =  async(event) =>{
+        event.preventDefault();
+        
+        if(validateEmail(user.email)){
+            setError({
+            error: false,
+            text:"",
+
+            });
+            try{
+                await login (user.email, user.password)
+                navigate("/Administrador")
+            }catch(error){
+                console.log(error);
+                
+            }
+        } else{
+            setError({
+                error: true,
+                text:"Formato de email incorrecto",
+            });
+        } 
+             
+    }
 
     return(
         <Box sx={{ flexGrow: 1 }}>
@@ -50,23 +93,27 @@ const Navbar = () =>{
                             <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
                                 Login
                             </Typography>
-                            <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email"
-                                autoComplete="email" autoFocus />
-                            <TextField margin="normal" required fullWidth name="password" label="Password" type="password"
-                            id="password" autoComplete="current-password"/>
-                            <Button onClick={handleOpen} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Entrar</Button>
+                            
+                            <TextField margin="normal" required fullWidth name="email" label="Correo Intitucional" type="email"
+                            id="email"  error={error.error} helperText={error.text}  onChange={handleChange} 
+                             />
+
+                            <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password"
+                                autoComplete="password" type="password" autoFocus onChange={handleChange} />
+
+                            <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Entrar</Button>
                                 <Grid container>
                                     <Grid item xs>
-                                    <Link href="/Usuario" variant="body2">
+                                    <Link href="/Usuario" variant="body2" color="#FF0000">
                                         Olvidó Contraseña?
                                     </Link>
                                     </Grid>
                                     <Grid item>
-                                    <Link href="/Registro" variant="body2">
+                                    <Link href="/Registro" variant="body2" color="#FF0000">
                                         No tiene cuenta? Registrarse
                                     </Link>
-                                    </Grid>
                                 </Grid>
+                            </Grid>
                         </Box>
                     </Modal>
                     </div>
@@ -74,6 +121,7 @@ const Navbar = () =>{
             </AppBar>
         </Box>
     )
+   
 }
 
 export default Navbar;
