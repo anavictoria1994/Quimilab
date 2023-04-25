@@ -8,15 +8,17 @@ import {AuthProvider} from "./context/AuthContext";
 
 
 function App() {
+
   return (
     <AuthProvider>
+
       <Routes>
         <Route path="/" element ={<Home/>} />
-        <Route path="/Usuario" element ={<Generador/>} />
+        <Route path="/Generador" element ={<Generador/>} />
         <Route path="/Registro" element ={<Registro/>} />
         <Route path="/Administrador" element ={<Administrador/>} />
-       
       </Routes>
+      
     </AuthProvider>
     
         
