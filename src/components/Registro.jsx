@@ -59,7 +59,6 @@ export function Registro(){
             error: false,
             text:"",
             });
-            console.log("email correcto");
             try{
                 await signup(user.email, user.Contrasena, user.Nombre, user.Apellidos, user.tipoDocumento, user.NumDocumento, user.Telefono, user.Cargo)
                 navigate("/")
@@ -71,10 +70,7 @@ export function Registro(){
                 error: true,
                 text:"Formato de email incorrecto",
             });
-                console.log("email incorrecto");
-        }
-        
-        
+        } 
     }
 
   

@@ -7,6 +7,7 @@ import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, } from "
 
 
 
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -40,6 +41,7 @@ const Navbar = () =>{
         
     });
 
+    
     const handleChange = ({target: {name, value}}) =>{ 
         setUser({...user,[name]:value})
     };
@@ -62,19 +64,23 @@ const Navbar = () =>{
                 await login (user.email, user.password)
                 navigate("/Administrador")
             }catch(error){
-                console.log(error);
+                setError({
+                    error: true,
+                    text:"Email o Contraseña incorrecto",
+                });
                 
             }
         } else{
             setError({
                 error: true,
-                text:"Formato de email incorrecto",
+                text:"Email o Contraseña incorrecto",
             });
         } 
              
     }
 
     return(
+        
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" sx={{bgcolor: "#FF0000"}}>
                 <Toolbar>
@@ -99,7 +105,7 @@ const Navbar = () =>{
                              />
 
                             <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password"
-                                autoComplete="password" type="password" autoFocus onChange={handleChange} />
+                                autoComplete="password" type="password" autoFocus   error={error.error} helperText={error.text} onChange={handleChange} />
 
                             <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Entrar</Button>
                                 <Grid container>
@@ -120,6 +126,7 @@ const Navbar = () =>{
                 </Toolbar>
             </AppBar>
         </Box>
+        
     )
    
 }
