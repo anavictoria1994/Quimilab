@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
+import {CssBaseline,Box,List,Toolbar, Typography, IconButton,Divider,ListItemIcon,ListItemButton, ListItemText, ListSubheader  } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import List from '@mui/material/List';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
+import MuiDrawer from '@mui/material/Drawer';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { mainListItems, secondaryListItems } from './listItems';
-
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import ScienceIcon from '@mui/icons-material/Science';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LayersIcon from '@mui/icons-material/Layers';
+import { useAuth } from '../context/AuthContext';
 
 
 const drawerWidth = 240;
@@ -68,6 +67,13 @@ const mdTheme = createTheme();
 
 export function Administrador(){
   const [open, setOpen] = React.useState(true);
+
+  const {user, logout} = useAuth();
+
+  const handleLogout = async() =>{
+    await logout()
+  };
+
   const toggleDrawer = () => {
     setOpen(!open);
   };    
@@ -92,7 +98,7 @@ export function Administrador(){
                 ...(open && { display: 'none' }),
               }}
             >
-              <MenuIcon />
+            <MenuIcon />
             </IconButton>
             <Typography
               component="h1"
@@ -103,7 +109,16 @@ export function Administrador(){
             >
               Quimilab
             </Typography>
-           
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              {user.email}
+            </Typography>
+            
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -121,9 +136,50 @@ export function Administrador(){
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            <ListItemButton>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Mi Perfil" />
+            </ListItemButton>
+
+            <ListItemButton>
+              <ListItemIcon>
+                <ScienceIcon />
+              </ListItemIcon>
+              <ListItemText primary="Laboratorios" />
+            </ListItemButton>
+
+            <ListItemButton>
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Generador" />
+            </ListItemButton>
+
+            <ListItemButton>
+              <ListItemIcon>
+                <BarChartIcon />
+              </ListItemIcon>
+              <ListItemText primary="Reportes" />
+            </ListItemButton>
+
+            <ListItemButton>
+              <ListItemIcon>
+                <LayersIcon />
+              </ListItemIcon>
+              <ListItemText primary="Residuos" />
+            </ListItemButton>
+            <Divider/>
+            <ListSubheader component="div" inset>
+              Cerrar sesion
+            </ListSubheader>
+            <ListItemButton onClick={{handleLogout} }>
+              <ListItemIcon>
+                <ExitToAppIcon />
+              </ListItemIcon>
+              <ListItemText primary="Salir" />
+            </ListItemButton>
           </List>
           </Drawer>
         <Box
@@ -142,18 +198,11 @@ export function Administrador(){
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
+                <Paper>
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                <Paper >
                 </Paper>
               </Grid>
             </Grid>

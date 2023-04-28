@@ -9,7 +9,6 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 
-
 export const mainListItems = (
     
   <React.Fragment>
@@ -41,11 +40,12 @@ export const mainListItems = (
 );
 
 export const secondaryListItems = (
+    
   <React.Fragment>
     <ListSubheader component="div" inset>
       Cerrar sesion
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton id="salir" >
       <ListItemIcon>
         <ExitToAppIcon />
       </ListItemIcon>
