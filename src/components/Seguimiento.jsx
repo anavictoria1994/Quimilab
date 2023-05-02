@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-export function Operador(){ 
+export function Seguimiento(){ 
         
     return (
-      <></>
+      <>Seguimiento</>
     );
 }
 
 export default function Dashboard() {
-    return <Operador/>;
+    return <Seguimiento/>;
 }

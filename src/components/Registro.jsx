@@ -60,7 +60,7 @@ export function Registro(){
             text:"",
             });
             try{
-                await signup(user.email, user.Contrasena, user.Nombre, user.Apellidos, user.tipoDocumento, user.NumDocumento, user.Telefono, user.Cargo)
+                await signup(user.email, user.Contrasena, user.Nombre, user.Apellidos, user.tipoDocumento, user.NumDocumento, user.Telefono, user.Cargo,user.Rol)
                 navigate("/")
             }catch(error){
                 console.log(error);
@@ -123,6 +123,20 @@ export function Registro(){
                 </FormControl>
                 <TextField margin="normal" required fullWidth name="Contrasena" label="Contrasena" type="password"
                     id="Contrasena"  onChange={handleChange}  />
+                <FormControl fullWidth margin="normal">
+                <InputLabel id="select-label" >Rol</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="Rol"
+                    label="Rol"
+                    name="Rol"
+                    onChange={handleChange}
+                >
+                    <MenuItem value={"Administrador"}>Administrador</MenuItem>
+                    <MenuItem value={"Generador"}>Generador</MenuItem>
+                    <MenuItem value={"Operador"}>Operador</MenuItem>
+                </Select>
+                </FormControl>
                 <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Enviar Registro</Button>
                 <Link href="/" variant="body2"  color="#FF0000">
                     Salir
