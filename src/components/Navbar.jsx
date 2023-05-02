@@ -33,7 +33,8 @@ const Navbar = () =>{
     });
 
     const {login, loginWithGoogle} = useAuth();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    
 
     const [error,setError] = useState({
         error: false,
@@ -55,6 +56,7 @@ const Navbar = () =>{
         try{
             await loginWithGoogle()
             navigate("/Administrador")
+            
         }catch(error){
             setError({
                 error: true,
@@ -62,7 +64,6 @@ const Navbar = () =>{
             });
             
         }
-       
     }
 
     const handleSubmit =  async(event) =>{
@@ -72,15 +73,21 @@ const Navbar = () =>{
             setError({
             error: false,
             text:"",
-
+                
             });
+            
             try{
+                
                 await login (user.email, user.password)
-                navigate("/Administrador")
+                //navigate("/Administrador")
+                
+                
+   
             }catch(error){
+                console.log({error})
                 setError({
                     error: true,
-                    text:"Email o Contraseña incorrecto",
+                    text:"rol no encontrado",
                 });
                 
             }
