@@ -10,6 +10,7 @@ import {AuthProvider} from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ProtectedRouteHome } from "./components/ProtectedRouteHome";
 import { Seguimiento } from "./components/Seguimiento";
+import { RecuperarCon } from "./components/RecuperarCon";
 
 function App() {
 
@@ -18,9 +19,15 @@ function App() {
       <ContenedorPrincipal>
       <Routes>
         <Route path="/Registro" element ={<Registro/>} />
+        <Route path="/RecuperarCon" element ={<RecuperarCon/>} />
         {/* <Route path="/PaginaPrincipal" element ={<PaginaPrincipal/>} /> */}
         <Route path="/Seguimiento" element ={<Seguimiento/>} />
-        <Route path="/Generador" element ={<Generador/>} />
+        <Route path="/Generador" element ={
+        <ProtectedRoute>
+        <Generador/>
+        </ProtectedRoute>
+        
+        } />
         <Route path="/Operador" element ={
           <ProtectedRoute>
           <Operador/>

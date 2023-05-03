@@ -132,7 +132,7 @@ const Navbar = () =>{
                             <Button onClick={handleSubmitGoogle} id = "googlelogin" type="button" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar con Google</Button>
                                 <Grid container>
                                     <Grid item xs>
-                                    <Link href="/Usuario" variant="body2" color="#FF0000">
+                                    <Link href="/RecuperarCon" variant="body2" color="#FF0000">
                                         Olvidó Contraseña?
                                     </Link>
                                     </Grid>
