@@ -1,10 +1,13 @@
 import * as React from 'react';
-import Statements from './Statements/Statements';
+import {  Grid } from '@mui/material';
+import imgQuimilab from "../assets/img/imagenquimilab.png"
 
 export function Generador(){ 
         
     return (
-      <Statements/>
+      <Grid container direction="column" alignItems="center" justify ="center" p={2}>
+                  <img src = {imgQuimilab} alt="Imagen nv" class="img"/>   
+      </Grid>
     );
 }
 

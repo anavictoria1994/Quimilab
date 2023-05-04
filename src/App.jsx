@@ -9,8 +9,11 @@ import {Registro} from "./components/Registro";
 import {AuthProvider} from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ProtectedRouteHome } from "./components/ProtectedRouteHome";
-import { Seguimiento } from "./components/Seguimiento";
+import { Seguimiento } from "./rutasComponents/Seguimiento";
+import { PerfilUsuario } from "./rutasComponents/PerfilUsuario";
 import { RecuperarCon } from "./components/RecuperarCon";
+import {Statements} from './components/Statements/Statements';
+
 
 function App() {
 
@@ -22,11 +25,12 @@ function App() {
         <Route path="/RecuperarCon" element ={<RecuperarCon/>} />
         {/* <Route path="/PaginaPrincipal" element ={<PaginaPrincipal/>} /> */}
         <Route path="/Seguimiento" element ={<Seguimiento/>} />
+        <Route path="/Statements" element ={<Statements/>} />
+        <Route path="/PerfilUsuario" element ={<PerfilUsuario/>} />
         <Route path="/Generador" element ={
         <ProtectedRoute>
         <Generador/>
         </ProtectedRoute>
-        
         } />
         <Route path="/Operador" element ={
           <ProtectedRoute>
