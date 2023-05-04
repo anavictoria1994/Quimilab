@@ -14,7 +14,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { MainListItems, SecondaryListItems } from './listaItemsGenerador';
+import { MainListItems, SecondaryListItems } from './listaItems';
 import { useAuth } from "../context/AuthContext";
 
 const drawerWidth = 240;

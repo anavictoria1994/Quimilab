@@ -17,13 +17,21 @@ import { Link, useNavigate } from 'react-router-dom';
 
 
 const generador = {
-  // "Mi Perfil": <AccountCircleIcon />,
+  "Mi Perfil": {
+    link: "/PerfilUsuario",
+    icono: <DashboardIcon />
+   },
+
   // "Declaración": <DeleteSweepIcon />,
   // "Seguimiento": <ChecklistRtlIcon />,
   // "Reportes": <BarChartIcon />,
 }
 const administrador = {
-  // "Mi Perfil": <DashboardIcon />,
+  "Mi Perfil": {
+    link: "/PerfilUsuario",
+    icono: <DashboardIcon />
+   },
+
   // "Laboratorios": <ScienceIcon />,
   // "Generadores": <PeopleIcon />,
   // "Reportes": <BarChartIcon />,
@@ -33,6 +41,11 @@ const operador = {
   "Seguimiento": {
     link: "/Seguimiento",
     icono: <ChecklistRtlIcon />},
+  "Mi Perfil": {
+    link: "/PerfilUsuario",
+    icono: <DashboardIcon />
+  },
+  
   // "Reportes": <BarChartIcon />,
 }
 
