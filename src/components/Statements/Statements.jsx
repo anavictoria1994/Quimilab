@@ -3,7 +3,7 @@ import {Box} from '@mui/material'
 import StatementsList from './StatementsList'
 
 
-const Statements = () => {
+export function  Statements(){
   return (
     <Box sx={{py:2}}>
         <StatementsList/>
@@ -11,4 +11,6 @@ const Statements = () => {
   )
 }
 
-export default Statements
+export default function Dashboard() {
+  return <Statements/>;
+}

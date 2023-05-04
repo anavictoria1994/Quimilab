@@ -21,8 +21,11 @@ const generador = {
     link: "/PerfilUsuario",
     icono: <DashboardIcon />
    },
-
-  // "Declaración": <DeleteSweepIcon />,
+   "Declaraciones": {
+    
+    link: "/Statements",
+    icono: <BarChartIcon />,
+   },
   // "Seguimiento": <ChecklistRtlIcon />,
   // "Reportes": <BarChartIcon />,
 }

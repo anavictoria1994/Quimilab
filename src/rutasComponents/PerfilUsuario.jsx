@@ -13,6 +13,7 @@ export function PerfilUsuario(){
     return (
         <Container maxWidth="sm">
             <Box sx={{ flexGrow: 1 }}>
+
                 <Grid container direction="column" alignItems="center" justify ="center" p={2}>
                     <Typography  variant="h4" >
                             MI PERFIL
@@ -48,9 +49,14 @@ export function PerfilUsuario(){
                         Correo: ana.acunam@correounivalle.edu.co
                         </Typography>
                     </Grid>
-                    <Grid item md={2} >
+                    <Grid item xs={1} >
                         <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}}textAlign='center' >
                             Editar
+                        </Button>
+                        </Grid>
+                    <Grid item xs={1} >
+                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}}textAlign='center' >
+                            Cambiar contraseña
                         </Button>
                     </Grid>
                     

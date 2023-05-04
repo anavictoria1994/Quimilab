@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {  Grid } from '@mui/material';
-import imgQuimilab from "../assets/img/quimilabimg.png"
+import imgQuimilabg from "../assets/img/imagenquimilab.png"
 
 export function Administrador(){
        
     return (
         <Grid container direction="column" alignItems="center" justify ="center" p={2}>
-                  <img src = {imgQuimilab} alt="Imagen nv" class="img"/>   
-            </Grid>
+                  <img src = {imgQuimilabg} alt="Imagen nv" class="img"/>   
+        </Grid>
         
     );
 }
