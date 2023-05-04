@@ -117,6 +117,9 @@ const CreateStatementForm = () => {
             </Table>
           </TableContainer>
         </Grid>
+        <Grid item xs={12} md={12} sx={{ my: 3, textAlign:"center" }}>
+          <Button variant="contained" color="success" sx={{width:"30%"}}>Crear</Button>
+        </Grid>
       </Grid>
     </Container>
   );
