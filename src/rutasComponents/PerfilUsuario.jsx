@@ -85,7 +85,7 @@ export function PerfilUsuario(){
                 
                     
                 </Grid> 
-                    <Box mx={4} mr={14} ml={14}sx={{ justifyContent: 'center'}}>
+                    <Box mx={4} mr={14} ml={14} sx={{ justifyContent: 'center'}}>
                         <Button color="inherit" onClick={handleOpen} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >
                             Cambiar contraseña
                         </Button>

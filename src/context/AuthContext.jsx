@@ -25,7 +25,7 @@ export function AuthProvider ({children}){
         const  infoUsuario = await createUserWithEmailAndPassword(auth, email, password).then((usurioFirebase)=>{
         return usurioFirebase;
         });
-        const docuRef = doc(firestore, `generadores/${infoUsuario.user.uid}`);
+        const docuRef = doc(firestore, `usuarios/${infoUsuario.user.uid}`);
         setDoc(docuRef,{nombre: Nombre, apellidos:Apellidos, tipoDocumento:tipoDocumento, numDocumento: NumDocumento, telefono: Telefono,email: email,cargo:Cargo,rol:Rol});
     }
 
@@ -43,7 +43,7 @@ export function AuthProvider ({children}){
     }
 
     const getUsuData = async (uid) =>{
-        const docuRef = doc(firestore, `generadores/${uid}`);
+        const docuRef = doc(firestore, `usuarios/${uid}`);
         const docuCifrada = await getDoc(docuRef);
         const usuarioData = docuCifrada.data();
        return usuarioData;
