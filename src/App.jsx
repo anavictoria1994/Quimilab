@@ -11,7 +11,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ProtectedRouteHome } from "./components/ProtectedRouteHome";
 import { Seguimiento } from "./rutasComponents/Seguimiento";
 import { PerfilUsuario } from "./rutasComponents/PerfilUsuario";
-import { RecuperarCon } from "./components/RecuperarCon";
+import { RecuperarCon } from "./rutasComponents/RecuperarCon";
 import {Statements} from './components/Statements/Statements';
 
 
@@ -24,12 +24,27 @@ function App() {
         <Route path="/Registro" element ={<Registro/>} />
         <Route path="/RecuperarCon" element ={<RecuperarCon/>} />
         {/* <Route path="/PaginaPrincipal" element ={<PaginaPrincipal/>} /> */}
-        <Route path="/Seguimiento" element ={<Seguimiento/>} />
-        <Route path="/Statements" element ={<Statements/>} />
-        <Route path="/PerfilUsuario" element ={<PerfilUsuario/>} />
+        <Route path="/Seguimiento" element ={
+          <ProtectedRoute>
+            <Seguimiento/>
+          </ProtectedRoute>
+        } />
+          
+        <Route path="/Statements" element ={
+          <ProtectedRoute>
+            <Statements/>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/PerfilUsuario" element ={
+          <ProtectedRoute>
+            <PerfilUsuario/>
+          </ProtectedRoute>
+        } />
+        
         <Route path="/Generador" element ={
         <ProtectedRoute>
-        <Generador/>
+          <Generador/>
         </ProtectedRoute>
         } />
         <Route path="/Operador" element ={

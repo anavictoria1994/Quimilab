@@ -4,7 +4,7 @@ import {Navigate} from "react-router-dom";
 
 export function ProtectedRoute ({children}){
     const {usere, loading} = useAuth()
-    if (loading) return <h1>g</h1>
+    if (loading) return <h1>Cargando</h1>
     console.log(usere);
     if (!usere) return <Navigate to='/'/>
     return<>{children}</>
