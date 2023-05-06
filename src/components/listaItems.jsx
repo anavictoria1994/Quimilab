@@ -3,17 +3,17 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+//import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
-import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+//import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ScienceIcon from '@mui/icons-material/Science';
-import PeopleIcon from '@mui/icons-material/People';
+//import ScienceIcon from '@mui/icons-material/Science';
+//import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
+//import LayersIcon from '@mui/icons-material/Layers';
 import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const generador = {
@@ -22,7 +22,6 @@ const generador = {
     icono: <DashboardIcon />
    },
    "Declaraciones": {
-    
     link: "/Statements",
     icono: <BarChartIcon />,
    },

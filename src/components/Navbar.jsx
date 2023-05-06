@@ -1,9 +1,9 @@
 import {useState} from "react";
-import { useNavigate } from "react-router-dom";
 import AppBar from '@mui/material/AppBar';
 import { useAuth } from "../context/AuthContext";
 import imgQuimilab from "../assets/img/quimilabimg.png"
-import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, } from "@mui/material"
+import CloseIcon from '@mui/icons-material/Close';
+import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, IconButton } from "@mui/material"
 
 
 
@@ -15,7 +15,8 @@ const style = {
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '1px solid error.main',
+    borderRadius: '2%',
     boxShadow: 24,
     p: 4,
   };
@@ -27,14 +28,13 @@ const Navbar = () =>{
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false); 
     
+    const {login, loginWithGoogle} = useAuth();
+    
+
     const [user, setUser] = useState({
         email:"",
         password:"",
     });
-
-    const {login, loginWithGoogle} = useAuth();
-    const navigate = useNavigate();
-    
 
     const [error,setError] = useState({
         error: false,
@@ -42,7 +42,6 @@ const Navbar = () =>{
         
     });
 
-    
     const handleChange = ({target: {name, value}}) =>{ 
         setUser({...user,[name]:value})
     };
@@ -55,8 +54,6 @@ const Navbar = () =>{
     const handleSubmitGoogle =  async(event) =>{
         try{
             await loginWithGoogle()
-            navigate("/Administrador")
-            
         }catch(error){
             setError({
                 error: true,
@@ -79,9 +76,6 @@ const Navbar = () =>{
             try{
                 
                 await login (user.email, user.password)
-                //navigate("/Administrador")
-                
-                
    
             }catch(error){
                 console.log({error})
@@ -117,6 +111,9 @@ const Navbar = () =>{
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
+                            <IconButton    onClick={handleClose}>
+                                <CloseIcon />
+                            </IconButton>
                             <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
                                 Iniciar Sesion
                             </Typography>
@@ -125,7 +122,7 @@ const Navbar = () =>{
                             id="email"  error={error.error} helperText={error.text}  onChange={handleChange} 
                              />
 
-                            <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password"
+                            <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password" 
                                 autoComplete="password" type="password" autoFocus   error={error.error} helperText={error.text} onChange={handleChange} />
 
                             <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar</Button>
@@ -133,7 +130,7 @@ const Navbar = () =>{
                                 <Grid container>
                                     <Grid item xs>
                                     <Link href="/RecuperarCon" variant="body2" color="#FF0000">
-                                        Olvidó Contraseña?
+                                        Olvidó su Contraseña?
                                     </Link>
                                     </Grid>
                                     <Grid item>
