@@ -120,6 +120,7 @@ export function Registro(){
                     <MenuItem value={"Laboratorista"}>Laboratorista</MenuItem>
                     <MenuItem value={"Estudiante"}>Estudiante</MenuItem>
                     <MenuItem value={"Practicante"}>Practicante</MenuItem>
+                    <MenuItem value={"Servicios"}>Servicios Varios</MenuItem>
                 </Select>
                 </FormControl>
                 <TextField margin="normal" required fullWidth name="Contrasena" label="Contrasena" type="password"
