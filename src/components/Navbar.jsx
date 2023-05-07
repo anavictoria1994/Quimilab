@@ -1,10 +1,15 @@
-import {useState} from "react";
+import { forwardRef, useState} from "react";
 import AppBar from '@mui/material/AppBar';
 import { useAuth } from "../context/AuthContext";
 import imgQuimilab from "../assets/img/quimilabimg.png"
 import CloseIcon from '@mui/icons-material/Close';
 import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, IconButton } from "@mui/material"
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 
 
@@ -25,11 +30,21 @@ const style = {
 const Navbar = () =>{
 
     const [open, setOpen] = useState(false);
+    const [openAler, setOpenAlert] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false); 
     
-    const {login, loginWithGoogle} = useAuth();
+   
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenAlert(false);
+      };
     
+    const {login, loginWithGoogle} = useAuth();
+
 
     const [user, setUser] = useState({
         email:"",
@@ -76,19 +91,33 @@ const Navbar = () =>{
             try{
                 
                 await login (user.email, user.password)
-   
+                setOpenAlert(true);
             }catch(error){
-                console.log({error})
-                setError({
-                    error: true,
-                    text:"rol no encontrado",
-                });
+                if(error.code === "auth/wrong-password"){
+                    setError({
+                        error: true,
+                        text:"Contraseña Incorrecta",
+                    });
+                }
+                if(error.code === "auth/missing-password"){
+                    setError({
+                        error: true,
+                        text:"Por favor Ingresar la Contraseña",
+                    });
+                }
+                if(error.code === "auth/user-not-found"){
+                    setError({
+                        error: true,
+                        text:"Usuario no Registrado",
+                    });
+                }
+
                 
             }
-        } else{
+        } else  {
             setError({
                 error: true,
-                text:"Email o Contraseña incorrecto",
+                text:"Ingrese usurios y Contraseña",
             });
         } 
              
@@ -126,6 +155,11 @@ const Navbar = () =>{
                                 autoComplete="password" type="password" autoFocus   error={error.error} helperText={error.text} onChange={handleChange} />
 
                             <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar</Button>
+                            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                                    Ingreso exitoso!
+                                </Alert>
+                            </Snackbar>
                             <Button onClick={handleSubmitGoogle} id = "googlelogin" type="button" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar con Google</Button>
                                 <Grid container>
                                     <Grid item xs>

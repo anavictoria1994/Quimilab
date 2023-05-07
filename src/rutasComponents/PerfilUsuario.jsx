@@ -77,7 +77,7 @@ export function PerfilUsuario(){
                         Cargo: {usere.cargo}
                         </Typography>
                     </Grid>
-                    <Grid item md={1} >
+                    <Grid item md={1} xs={12} sm={6}>
                         <Typography variant="h5"  >
                         Correo: {usere.email}
                         </Typography>

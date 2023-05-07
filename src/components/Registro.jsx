@@ -55,6 +55,7 @@ export function Registro(){
         
     const handleSubmit = async event =>{
         event.preventDefault();
+        
         if(validateEmail(user.email)){
             setError({
             error: false,
@@ -90,10 +91,9 @@ export function Registro(){
                 <Select
                     labelId="demo-simple-select-label"
                     id="tipoDocumento"
-                    
                     label="Tipo de Documento"
-                    name="tipoDocumento"
                     onChange={handleChange}
+                    
                 >
                     <MenuItem value={"Cedula"}>Cedula de Ciudadania</MenuItem>
                     <MenuItem value={"Pasaporte"}>Pasaporte</MenuItem>
@@ -114,8 +114,9 @@ export function Registro(){
                     labelId="demo-simple-select-label"
                     id="Cargo"
                     label="Cargo"
-                    name="Cargo"
+                    
                     onChange={handleChange}
+                    
                 >
                     <MenuItem value={"Laboratorista"}>Laboratorista</MenuItem>
                     <MenuItem value={"Estudiante"}>Estudiante</MenuItem>
@@ -131,7 +132,7 @@ export function Registro(){
                     labelId="demo-simple-select-label"
                     id="Rol"
                     label="Rol"
-                    name="Rol"
+                    
                     onChange={handleChange}
                 >
                     <MenuItem value={"Administrador"}>Administrador</MenuItem>
