@@ -41,7 +41,7 @@ const Navbar = () =>{
           return;
         }
         setOpenAlert(false);
-      };
+    };
     
     const {login, loginWithGoogle} = useAuth();
 
@@ -111,8 +111,13 @@ const Navbar = () =>{
                         text:"Usuario no Registrado",
                     });
                 }
-
-                
+                if (error.code === "auth/weak-password"){
+                    setError({
+                        error: true,
+                        text:"La contraseña debe tener mas de 6 caracteres",
+                    });
+                }
+  
             }
         } else  {
             setError({
@@ -124,7 +129,7 @@ const Navbar = () =>{
     }
 
     return(
-        
+        <>
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" sx={{bgcolor: "#FF0000"}}>
                 <Toolbar>
@@ -155,11 +160,7 @@ const Navbar = () =>{
                                 autoComplete="password" type="password" autoFocus   error={error.error} helperText={error.text} onChange={handleChange} />
 
                             <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar</Button>
-                            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-                                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-                                    Ingreso exitoso!
-                                </Alert>
-                            </Snackbar>
+                            
                             <Button onClick={handleSubmitGoogle} id = "googlelogin" type="button" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar con Google</Button>
                                 <Grid container>
                                     <Grid item xs>
@@ -179,7 +180,12 @@ const Navbar = () =>{
                 </Toolbar>
             </AppBar>
         </Box>
-        
+        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                                    Ingreso exitoso!
+            </Alert>
+        </Snackbar>
+    </>
     )
    
 }

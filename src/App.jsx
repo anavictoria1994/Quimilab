@@ -4,6 +4,7 @@ import {Home} from "./components/Home";
 import {Generador} from "./components/Generador";
 import {ContenedorPrincipal} from "./components/ContenedorPrincipal";
 import {Administrador} from "./components/Administrador";
+import {Invitado} from "./components/Invitado";
 import {Operador} from "./components/Operador";
 import {Registro} from "./components/Registro";
 import {AuthProvider} from "./context/AuthContext";
@@ -56,6 +57,12 @@ function App() {
         <ProtectedRoute>
           <Administrador/>
         </ProtectedRoute>
+        } />
+
+        <Route path="/Invitado" element ={
+          <ProtectedRoute>
+            <Invitado/>
+          </ProtectedRoute>
         } />
         <Route path="/" element ={
           <ProtectedRouteHome>

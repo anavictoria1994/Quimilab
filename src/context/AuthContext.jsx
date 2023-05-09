@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword } from "firebase/auth";
+         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential } from "firebase/auth";
 import {doc, setDoc, getFirestore,getDoc} from "firebase/firestore";
 import {auth} from "../app/firebase";
 import {app} from "../app/firebase";
@@ -26,7 +26,7 @@ export function AuthProvider ({children}){
         return usurioFirebase;
         });
         const docuRef = doc(firestore, `usuarios/${infoUsuario.user.uid}`);
-        setDoc(docuRef,{nombre: Nombre, apellidos:Apellidos, tipoDocumento:tipoDocumento, numDocumento: NumDocumento, telefono: Telefono,email: email,cargo:Cargo,rol:Rol});
+        setDoc(docuRef,{nombre: Nombre, apellidos:Apellidos, tipoDocumento:tipoDocumento, numDocumento: NumDocumento, telefono: Telefono,email: email, cargo:Cargo, rol:Rol});
     }
 
     const login =  async (email, password)=>{
@@ -54,6 +54,17 @@ export function AuthProvider ({children}){
         return await sendPasswordResetEmail(auth, email);
     }
 
+    const reauthenticateWithCredentiaL =  async (password)=>{
+        const resultado = {statusResponse: true, error: null}
+        const credential = firestore.auth.EmailAuthProvider.credential(usere.email,password);
+        try{
+            await reauthenticateWithCredential(auth.currentUser,credential);
+        }catch(error){
+            resultado.statusResponse = false
+            resultado.error = error
+        }
+        return resultado
+    }
     const updatePasswordc =  async ( password)=>{
         return await updatePassword(auth.currentUser,password);
     }
@@ -82,6 +93,9 @@ export function AuthProvider ({children}){
                         case "Operador":
                             navigate("/Operador")
                             break
+                        case "Invitado":
+                                navigate("/Invitado")
+                                break
                         default:
                             break
                     };
@@ -97,7 +111,7 @@ export function AuthProvider ({children}){
 
     
     return(
-        <authcontext.Provider value ={{signup, login, usere, logout, loading, loginWithGoogle, getUsuData, updatePasswordc, resetPassword}}>
+        <authcontext.Provider value ={{signup, login, usere, logout, loading, loginWithGoogle, getUsuData, updatePasswordc, resetPassword, reauthenticateWithCredentiaL}}>
             {children}
         </authcontext.Provider>
     )
