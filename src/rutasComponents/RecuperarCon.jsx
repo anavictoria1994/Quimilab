@@ -25,6 +25,12 @@ export function RecuperarCon(){
         email:"",
     });
 
+    const [error,setError] = useState({
+        error: false,
+        text:"",
+        
+    });
+
     const handleChange = ({target: {name, value}}) =>{ 
         setUser({...user,[name]:value})
     };   
@@ -35,7 +41,13 @@ export function RecuperarCon(){
             await resetPassword (user.email)
             console.log('se envio un enlace al email')
         }catch(error){ 
-            console.log({error})  
+            console.log({error})
+            if(error.code === "auth/user-not-found"){
+                setError({
+                    error: true,
+                    text:"Usuario no Registrado",
+                });
+            }  
         }
     }
   
@@ -46,7 +58,7 @@ export function RecuperarCon(){
                     Recuperar contraseña
                 </Typography>
                 <TextField margin="normal" required fullWidth id="email" label="email" name="email"  
-                     autoFocus onChange={handleChange}/>
+                     autoFocus onChange={handleChange} error={error.error} helperText={error.text}/>
                 <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Restablecer Contraseña</Button>
                 <Link href="/" variant="body2"  color="#FF0000">
                     Salir

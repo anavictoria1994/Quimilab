@@ -1,10 +1,13 @@
 
-import {useState} from "react";
+import { forwardRef,useState} from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Select, MenuItem, InputLabel, FormControl, Link } from "@mui/material";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const style = {
     position: 'absolute',
@@ -21,6 +24,14 @@ const style = {
 };
 
 export function Registro(){
+    const [openAler, setOpenAlert] = useState(false);
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenAlert(false);
+    };
 
     const [user, setUser] = useState({
         Nombre: "",
@@ -29,23 +40,27 @@ export function Registro(){
         NumDocumento:"",
         Telefono:"",
         email:"",
-        Cargo:"",
-        Contrasena:"",
-        laboratorio:"",
-        Rol:"",
+        cargo:"",
+        password:"",
+        password2:"",
+        Rol:"Invitado",
     });
 
     const {signup} = useAuth()
-    const navigate = useNavigate()
 
     const handleChange = ({target: {name, value}}) =>{ 
         setUser({...user,[name]:value})
+        
     };
 
     const [error,setError] = useState({
         error: false,
         text:"",
         
+    });
+    const [errorContra,setErrorContra] = useState({
+        error: false,
+        text:"",  
     });
     
     const validateEmail = (email)=> {
@@ -55,24 +70,43 @@ export function Registro(){
         
     const handleSubmit = async event =>{
         event.preventDefault();
-        
+
+        if (user.password !== user.password2) {
+            setErrorContra({
+                error: true,
+                text: "Las contraseñas no son iguales",
+            });
+            return;
+        }
         if(validateEmail(user.email)){
             setError({
             error: false,
             text:"",
             });
+            console.log(user.Nombre)
             try{
-                await signup(user.email, user.Contrasena, user.Nombre, user.Apellidos, user.tipoDocumento, user.NumDocumento, user.Telefono, user.Cargo,user.Rol)
-                navigate("/")
+                await signup(user.email, user.password, user.Nombre, user.Apellidos, user.tipoDocumento,user.NumDocumento, user.Telefono, user.cargo, user.Rol)
+                setOpenAlert(true);
             }catch(error){
-                console.log(error);
+                console.log(error.Code);
+               
+                if (error.code === "auth/weak-password"){
+                    setErrorContra({
+                        error: true,
+                        text:"La contraseña debe tener mas de 6 caracteres",
+                    });
+                }
             }
-        } else{
+        } else {
             setError({
                 error: true,
                 text:"Formato de email incorrecto",
             });
-        } 
+        }
+        
+
+        
+        
     }
 
   
@@ -83,17 +117,17 @@ export function Registro(){
                     Solicitud de Registro
                 </Typography>
                 <TextField margin="normal" required fullWidth id="Nombre" label="Nombre" name="Nombre"  
-                     autoFocus onChange={handleChange}/>
+                     autoFocus onChange={handleChange} />
                 <TextField margin="normal" required fullWidth name="Apellidos" label="Apellidos" type="Apellidos"
-                    id="Apellidos" onChange={handleChange}/>
+                    id="Apellidos" onChange={handleChange} error={error.error} helperText={error.text}/>
                 <FormControl fullWidth margin="normal">
                 <InputLabel id="select-label" >Tipo de Documento</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
                     id="tipoDocumento"
                     label="Tipo de Documento"
+                    name="tipoDocumento"
                     onChange={handleChange}
-                    
                 >
                     <MenuItem value={"Cedula"}>Cedula de Ciudadania</MenuItem>
                     <MenuItem value={"Pasaporte"}>Pasaporte</MenuItem>
@@ -101,22 +135,22 @@ export function Registro(){
                 </Select>
                 </FormControl>
                 <TextField margin="normal" required fullWidth name="NumDocumento" label="Numero de Documento" type="number"
-                    id="NumDocumento" onChange={handleChange}/>
+                    id="NumDocumento" error={error.error} helperText={error.text} onChange={handleChange}/>
                 <TextField margin="normal" required fullWidth name="Telefono" label="Telefono" type="number" 
-                    id="Telefono" onChange={handleChange}/>
+                    id="Telefono" error={error.error} helperText={error.text} onChange={handleChange}/>
                 <TextField margin="normal" required fullWidth name="email" label="Correo Intitucional" type="email"
                     id="email"   error={error.error} helperText={error.text} 
-                    onChange={handleChange}  />
-
+                    onChange={handleChange} 
+                />
+                
                 <FormControl fullWidth margin="normal">
-                <InputLabel id="select-label" >Cargo</InputLabel>
+                <InputLabel id="select-label">Cargo</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
-                    id="Cargo"
+                    id="cargo"
                     label="Cargo"
-                    
+                    name="cargo"
                     onChange={handleChange}
-                    
                 >
                     <MenuItem value={"Laboratorista"}>Laboratorista</MenuItem>
                     <MenuItem value={"Estudiante"}>Estudiante</MenuItem>
@@ -124,27 +158,23 @@ export function Registro(){
                     <MenuItem value={"Servicios"}>Servicios Varios</MenuItem>
                 </Select>
                 </FormControl>
-                <TextField margin="normal" required fullWidth name="Contrasena" label="Contrasena" type="password"
-                    id="Contrasena"  onChange={handleChange}  />
-                <FormControl fullWidth margin="normal">
-                <InputLabel id="select-label" >Rol</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="Rol"
-                    label="Rol"
-                    
-                    onChange={handleChange}
-                >
-                    <MenuItem value={"Administrador"}>Administrador</MenuItem>
-                    <MenuItem value={"Generador"}>Generador</MenuItem>
-                    <MenuItem value={"Operador"}>Operador</MenuItem>
-                </Select>
-                </FormControl>
+
+                <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password" 
+                                autoComplete="password" type="password" autoFocus   error={errorContra.error} helperText={errorContra.text} onChange={handleChange} />
+                <TextField margin="normal" required fullWidth id="password2" label="Confirme la contraseña" name="password2" 
+                                autoComplete="password" type="password" autoFocus   error={errorContra.error} helperText={errorContra.text} onChange={handleChange} />
+                
                 <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Enviar Registro</Button>
+                
                 <Link href="/" variant="body2"  color="#FF0000">
                     Salir
                 </Link>        
             </Box>
+            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                                    Ingreso exitoso!
+                                </Alert>
+            </Snackbar>
         </>
     )
 }

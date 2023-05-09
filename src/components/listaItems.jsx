@@ -47,7 +47,13 @@ const operador = {
     link: "/PerfilUsuario",
     icono: <DashboardIcon />
   },
-  
+  // "Reportes": <BarChartIcon />,
+}
+const invitado = {
+  "Mi Perfil": {
+    link: "/PerfilUsuario",
+    icono: <DashboardIcon />
+  },
   // "Reportes": <BarChartIcon />,
 }
 
@@ -64,6 +70,10 @@ export const MainListItems = () => {
       break
     case "Operador":
       items = Object.entries(operador)
+      break
+    
+    case "Invitado":
+      items = Object.entries(invitado)
       break
     default:
       break
