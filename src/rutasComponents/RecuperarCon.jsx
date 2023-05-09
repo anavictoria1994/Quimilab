@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { useAuth } from "../context/AuthContext";
+import {forwardRef, useState} from "react";
+import {  useAuth } from "../context/AuthContext";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
-import {useState} from "react";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+})
 const style = {
     position: 'absolute',
     top: '50%',
@@ -20,11 +24,17 @@ const style = {
 
 export function RecuperarCon(){
     const { resetPassword} = useAuth();
-
     const [user, setUser] = useState({
         email:"",
     });
+    const [openAler, setOpenAlert] = useState(false);
 
+    const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+          return;
+        }
+        setOpenAlert(false);
+    };
     const [error,setError] = useState({
         error: false,
         text:"",
@@ -39,13 +49,14 @@ export function RecuperarCon(){
         if(!user.email) return console.log('no existe el email') 
         try{  
             await resetPassword (user.email)
-            console.log('se envio un enlace al email')
+            setOpenAlert(true);
+            
         }catch(error){ 
             console.log({error})
             if(error.code === "auth/user-not-found"){
                 setError({
                     error: true,
-                    text:"Usuario no Registrado",
+                    text:"Correo no Registrado",
                 });
             }  
         }
@@ -64,6 +75,11 @@ export function RecuperarCon(){
                     Salir
                 </Link>        
             </Box>
+            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                        Se envio un link a su email!
+            </Alert>
+            </Snackbar>
         </>
     )
 }

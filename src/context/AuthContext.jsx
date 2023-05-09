@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential } from "firebase/auth";
+         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import {doc, setDoc, getFirestore,getDoc} from "firebase/firestore";
 import {auth} from "../app/firebase";
 import {app} from "../app/firebase";
@@ -56,15 +56,16 @@ export function AuthProvider ({children}){
 
     const reauthenticateWithCredentiaL =  async (password)=>{
         const resultado = {statusResponse: true, error: null}
-        const credential = firestore.auth.EmailAuthProvider.credential(usere.email,password);
+        const credential = EmailAuthProvider.credential(usere.email, password);
         try{
             await reauthenticateWithCredential(auth.currentUser,credential);
         }catch(error){
             resultado.statusResponse = false
             resultado.error = error
         }
-        return resultado
+        return resultado;
     }
+
     const updatePasswordc =  async ( password)=>{
         return await updatePassword(auth.currentUser,password);
     }

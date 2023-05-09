@@ -44,6 +44,12 @@ export function PerfilUsuario(){
         
     });
 
+    const [errorContraActu,setErrorContraActu] = useState({
+        error: false,
+        text:"",
+        
+    });
+
     const [user, setUser] = useState({
         contrasena:"",
         contrasena1:"",
@@ -56,6 +62,15 @@ export function PerfilUsuario(){
 
     const handleSubmit=  async(event) =>{
         event.preventDefault();
+        const reauthenticateWith = await reauthenticateWithCredentiaL(user.contrasenaOld);
+        if(!reauthenticateWith.statusResponse){
+            setErrorContraActu({
+                error: true,
+                text: "Contraseña incorrecta",
+            }); 
+            return;
+        }
+
         if (user.contrasena !== user.contrasena1) {
             setError({
                 error: true,
@@ -63,21 +78,12 @@ export function PerfilUsuario(){
             });
             return;
         }
-        const reauthenticateWith = await reauthenticateWithCredentiaL(user.contrasena);
-        if(!reauthenticateWith.statusResponse){
-            setError({
-                error: true,
-                text: "Contrasena incorrecta",
-            });
-        }
 
         try{  
-            await updatePasswordc (user.contrasena)
-            console.log('se cambio la contrasena')
+            await updatePasswordc (user.contrasena1)
             setOpenAlert(true);
+            setOpen(false);
         }catch(error){
-            console.log(usere)
-            console.log({error}) 
             if (error.code === "auth/weak-password"){
                 setError({
                     error: true,
@@ -85,11 +91,11 @@ export function PerfilUsuario(){
                 });
             } 
         }
+        
     }
 
     return (
         <>
-        
         <Container maxWidth="md">
             <Box sx={{ flexGrow: 1} }>
                 <Grid container direction="column" alignItems="center" justify ="center" p={2} >
@@ -128,7 +134,6 @@ export function PerfilUsuario(){
                         </Typography>
                     </Grid>
                 
-                    
                 </Grid> 
                     <Box mx={4} mr={14} ml={14} sx={{ justifyContent: 'center'}}>
                         <Button color="inherit" onClick={handleOpen} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >
@@ -149,18 +154,16 @@ export function PerfilUsuario(){
                                         Cambiar Contraseña
                                     </Typography>
                                     <TextField margin="normal" required fullWidth id="contrasenaOld" label="Contraseña actual" name="contrasenaOld" type="password" 
-                                    autoFocus onChange={handleChange} error={error.error} helperText={error.text}/>
+                                    autoFocus onChange={handleChange} error={errorContraActu.error} helperText={errorContraActu.text}/>
                                     <TextField margin="normal" required fullWidth id="contrasena" label="Nueva contraseña" name="contrasena1" type="password" 
                                     autoFocus onChange={handleChange} error={error.error} helperText={error.text}/>
                                     <TextField margin="normal" required fullWidth id="contrasena2" label="Confirme la contraseña" name="contrasena" type="password" 
                                     autoFocus onChange={handleChange} error={error.error} helperText={error.text}/>
                                     <Button onClick={handleSubmit} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Guardar</Button>
                                 </Box>
-                            </Modal>
-                        </div>
-                
+                        </Modal>
+                    </div>
             </Box>
-            
         </Container>
         <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
             <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
