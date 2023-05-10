@@ -11,7 +11,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 //import ScienceIcon from '@mui/icons-material/Science';
 //import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-//import LayersIcon from '@mui/icons-material/Layers';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,10 +34,14 @@ const administrador = {
     icono: <DashboardIcon />
    },
 
+   "Reactivos": {
+    link: "/Reactivos",
+    icono: <ScienceOutlinedIcon/>
+   },
+
   // "Laboratorios": <ScienceIcon />,
   // "Generadores": <PeopleIcon />,
   // "Reportes": <BarChartIcon />,
-  // "Residuos": <LayersIcon />,
 }
 const operador = {
   "Seguimiento": {

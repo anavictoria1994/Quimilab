@@ -14,6 +14,7 @@ import { Seguimiento } from "./rutasComponents/Seguimiento";
 import { PerfilUsuario } from "./rutasComponents/PerfilUsuario";
 import { RecuperarCon } from "./rutasComponents/RecuperarCon";
 import {Statements} from './components/Statements/Statements';
+import {Reactivos} from './components/Reactivos/Reactivos';
 
 
 function App() {
@@ -34,6 +35,12 @@ function App() {
         <Route path="/Statements" element ={
           <ProtectedRoute>
             <Statements/>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/Reactivos" element ={
+          <ProtectedRoute>
+            <Reactivos/>
           </ProtectedRoute>
         } />
 

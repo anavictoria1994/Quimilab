@@ -1,6 +1,7 @@
 
 import { forwardRef,useState} from "react";
 import { useAuth } from "../context/AuthContext";
+import Container from '@mui/material/Container';
 import { Box, Button, TextField, Typography, Select, MenuItem, InputLabel, FormControl, Link } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -104,14 +105,12 @@ export function Registro(){
             });
         }
         
-
-        
-        
     }
 
   
     return (
         <>
+        <Container maxWidth="md">
             <Box  sx={style}  onSubmit={handleSubmit}>
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
                     Solicitud de Registro
@@ -170,12 +169,14 @@ export function Registro(){
                     Salir
                 </Link>        
             </Box>
-            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-                                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-                                    Ingreso exitoso!
-                                </Alert>
-            </Snackbar>
-        </>
+            
+        </Container>
+        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+            Ingreso exitoso!
+        </Alert>
+    </Snackbar>
+    </>
     )
 }
 

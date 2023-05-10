@@ -5,6 +5,8 @@ import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
+
+
 const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 })
@@ -41,6 +43,8 @@ export function RecuperarCon(){
         
     });
 
+    
+
     const handleChange = ({target: {name, value}}) =>{ 
         setUser({...user,[name]:value})
     };   
@@ -65,6 +69,7 @@ export function RecuperarCon(){
     return (
         <>
             <Box  sx={style}  onSubmit={handleSubmit}>
+              
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
                     Recuperar contraseña
                 </Typography>
