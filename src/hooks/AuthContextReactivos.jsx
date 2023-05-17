@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import {doc, getFirestore, getDoc} from "firebase/firestore";
-import {auth} from "../app/firebase";
+import { createContext, useContext, useState } from "react";
+import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
+import { useEffect } from "react";
 
 export const authcontext = createContext()
 
@@ -9,28 +9,88 @@ export const useAuth = () =>{
     const context = useContext(authcontext)
     return context;
 }
-const firestore = getFirestore(app);
+const db = getFirestore(app);
 
-export function AuthProvider ({children}){
-    
-    const [reactivos, setReactivos] = useState(null);
-    
-    const getUsuData = async (uid) =>{
-        const docuRef = doc(firestore, `usuarios/${uid}`);
-        const docuCifrada = await getDoc(docuRef);
-        const usuarioData = docuCifrada.data();
-       return usuarioData;
-    }
-    
+export const AuthContextReactivos = () => {
+    const [reactivos, setReactivos] = useState([]);
+    const [error, setError] = useState();
+    const [loading, setLoading] = useState({});
 
     useEffect(()=>{
-        return;
-    });
+        console.log("getdata")
+        getData()
+    }, [])
+
+    const getData = async ()=>{
+        try{
+            setLoading (prev =>({
+                ...prev, getData:true
+            }));
+            const querySnapshot = await getDocs(collection(db, "reactivos")); 
+            const dataDB = querySnapshot.docs.map(doc =>({id: doc.id, ...doc.data()}))
+            console.log(dataDB)
+            setReactivos(dataDB)
+        }catch (error){
+            console.log(error);
+            setError(error.message);
+        }finally{
+            setLoading (prev =>({
+                ...prev, getData:false
+            }));
+        }
+    }
+    
+    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,HojaSe) =>{
+        try{
+            setLoading (prev =>({
+                ...prev, addData:true
+            }));
+
+            const newDoc = {
+                Nombre:Nombre,
+                Sinonimo:Sinonimos,
+                NombreIngles:NombreIn,
+                Cas:Cas, 
+                EstadoFisico:EstadoFi,
+                HojaSeguridad: HojaSe
+            }
+            const docRef = doc(collection(db, "reactivos"));
+            await setDoc(docRef, newDoc);
+            setReactivos([...reactivos, newDoc])
+            }catch(error){
+                setError(error.message);
+            }finally{
+                setLoading (prev =>({
+                    ...prev, addData:false
+                }));
+            } 
+    }
+
+    const deleteData = async (reactivosid) =>{
+        try{
+            setLoading (prev =>({
+                ...prev, deleteData:true
+            }));
+            const docRef = doc(db, "reactivos", reactivosid);
+            await deleteDoc (docRef)
+            setReactivos(reactivos.filter(item =>  item.id !== reactivosid))
+            }catch(error){
+                setError(error.message);
+            }finally{
+                setLoading (prev =>({
+                    ...prev, deleteData:true
+                }));
+            } 
+    }
+
+    
     
     return{
-        
+        reactivos,
+        loading,
+        error,
+        addData,
+        getData,
+        deleteData,
     };
-         
-          
-    
 };

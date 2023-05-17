@@ -82,7 +82,6 @@ export function AuthProvider ({children}){
                         ...usuData
                     };
                     setUser(usu);
-                    console.log("ususrio final", usu); 
                 
                     switch (usu.rol){
                         case "Administrador":

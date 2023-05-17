@@ -1,4 +1,6 @@
 import React from "react";
+import { forwardRef,useState } from "react";
+import { AuthContextReactivos } from "../../hooks/AuthContextReactivos";
 import {
   Card,
   CardContent,
@@ -21,41 +23,67 @@ import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import CreateReactivosForm from "./CreateReactivosForm";
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+const Alert = forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+  
 const ReactivosList = () => {
+    
+    const {reactivos, loading, deleteData, addData } = AuthContextReactivos();
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
     const [open, setOpen] = useState(false);
+    const [openAler, setOpenAlert] = useState(false);
 
+    if(loading.getData) return<p>Cargando Informacion</p>
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
-      console.log(event.currentTarget)
-      console.log(openMenu);
     };
     
-    const handleCloseMenu = () => {
+    const handleClickDelete = async(reactivoid) => {
+      await deleteData(reactivoid)
       setAnchorEl(null);
     };
-  
+
+    const handleClickEdit = (reactivoid) => {
+      console.log(reactivoid)
+      setAnchorEl(null);
+    };
+
+    const handleCloseAlert = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenAlert(false);
+    }; 
+    
     const openDialogCreate = () => {
       setOpen(true);
     };
     const handleClose = () => {
       setOpen(false);
     };
+
     const columns = [
       { field: "id", headerName: "ID", width: 70 },
-      { field: "shippingDate", headerName: "  Nombre", width: 150 },
+      { field: "shippingDate", headerName: "Nombre", width: 160 },
       { field: "stage", headerName: "Sinonimos", width: 150 },
-      { field: "place", headerName: "Estado", width: 180 },
+      { field: "place", headerName: "Estado Fisico", width: 140 },
+      { field: "NamIngle", headerName: "Nombre Ingles", width: 150 },
       { field: "waste", headerName: "CAS", width: 150 },
+      { field: "containersQuantity", headerName: "Hoja Seguridad", width: 140 },
       {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: () => (
+        renderCell: (parametros) => {
+          
+          return (
           <>
             <Button
               variant="text"
@@ -76,39 +104,28 @@ const ReactivosList = () => {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem onClick={handleCloseMenu}>Editar</MenuItem>
-              <MenuItem onClick={handleCloseMenu}>Eliminar</MenuItem>
+              <MenuItem onClick={()=> handleClickEdit(parametros.row.uid)}>Editar</MenuItem>
+              <MenuItem onClick={()=> handleClickDelete(parametros.row.uid)}>Eliminar</MenuItem>
             </Menu>
+            
           </>
-        ),
+        )},
       },
     ];
-    const rows = [
-      {
-        id: 1,
-        shippingDate: "02/07/2020",
-        stage: "Verificación",
-        place: "Lab. químico",
-        containersQuantity: 6,
-        waste: "bazufre",
-      },
-      {
-        id: 2,
-        shippingDate: "02/07/2020",
-        stage: "Verificación",
-        place: "Lab. químico",
-        containersQuantity: 6,
-        waste: "cazufre",
-      },
-      {
-        id: 3,
-        shippingDate: "02/07/2020",
-        stage: "Verificación",
-        place: "Lab. químico",
-        containersQuantity: 6,
-        waste: "azufre",
-      },
-    ];
+    const rows =  reactivos.map((item, indice) => {
+      console.log(indice, item.id)
+      return {
+          id: indice,
+          shippingDate: item.Nombre,
+          stage: item.Sinonimo,
+          place: item.EstadoFisico,
+          containersQuantity: item.HojaSeguridad,
+          waste: item.Cas,
+          NamIngle: item.NombreIngles,
+          uid: item.id,      
+      }
+    })
+    
     
     return (
       <Container sx={{ my: 3 }}>
@@ -154,8 +171,8 @@ const ReactivosList = () => {
               rows={rows}
               columns={columns}
               pageSize={5}
+              heckboxSelection
               rowsPerPageOptions={[5]}
-              checkboxSelection
               disableRowSelectionOnClick
               editMode={false}
             />
@@ -171,10 +188,14 @@ const ReactivosList = () => {
             Registro de Reactivos
           </DialogTitle>
           <DialogContent>
-            <CreateReactivosForm/>
+            <CreateReactivosForm onAdd={addData}/>
           </DialogContent>
         </Dialog>
-        
+        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                    Reactivo Eliminado Correctamente!
+        </Alert>
+      </Snackbar>
       </Container>
     );
 };
