@@ -1,7 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import {  createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
-import { useEffect } from "react";
 
 export const authcontext = createContext()
 
@@ -11,7 +10,8 @@ export const useAuth = () =>{
 }
 const db = getFirestore(app);
 
-export const AuthContextReactivos = () => {
+export function AuthProviderReactivos({children}) {
+
     const [reactivos, setReactivos] = useState([]);
     const [error, setError] = useState();
     const [loading, setLoading] = useState({});
@@ -85,12 +85,16 @@ export const AuthContextReactivos = () => {
 
     
     
-    return{
+    return(
+        <authcontext.Provider value ={{
         reactivos,
         loading,
         error,
         addData,
         getData,
         deleteData,
-    };
-};
+        }}>
+            {children}
+        </authcontext.Provider>
+    ) 
+}

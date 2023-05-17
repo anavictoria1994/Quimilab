@@ -1,6 +1,6 @@
 import React from "react";
 import { forwardRef,useState } from "react";
-import { AuthContextReactivos } from "../../hooks/AuthContextReactivos";
+import { useAuth } from "../../hooks/AuthContextReactivos";
 import {
   Card,
   CardContent,
@@ -33,7 +33,7 @@ const Alert = forwardRef(function Alert(props, ref) {
   
 const ReactivosList = () => {
     
-    const {reactivos, loading, deleteData, addData } = AuthContextReactivos();
+    const {reactivos, loading, deleteData, addData } = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
     const [open, setOpen] = useState(false);
