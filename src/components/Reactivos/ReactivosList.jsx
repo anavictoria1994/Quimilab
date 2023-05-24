@@ -16,6 +16,9 @@ import {
   DialogContent,
   Menu,
   MenuItem,
+  TextField, 
+  Modal,
+  Typography,
   Box,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
@@ -30,16 +33,44 @@ const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px solid error.main',
+  borderRadius: '2%',
+  boxShadow: 24,
+  p: 4,
+};
 
 const ActionsButtons = ({params, deleteData, updateData}) => {
+
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenMOdal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const [newReactivo, setNewReactivo] = useState({
+    Nombre: "",
+    Sinonimos: "",
+    NombreIn: "",
+    Cas: "",
+    EstadoFi: "",
+    HojaSe: "",
+  });
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   
+  const handleChange = ({target: {name, value}}) =>{ 
+    setNewReactivo({...newReactivo,[name]:value})
+  };
+
   const handleClickDelete = async(reactivoid) => {
     if(window.confirm("Esta seguro de querer Eliminar este reactivo?")){
       await deleteData(reactivoid)
@@ -47,8 +78,8 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     setAnchorEl(null);
   };
 
-  const handleClickEdit = async(reactivoid, nuevoNombre) => {
-    await updateData(reactivoid, nuevoNombre)
+  const handleClickEdit = async(reactivoid) => {
+    await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
     setAnchorEl(null);
   };
   const handleClose = () => {
@@ -76,10 +107,39 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={()=> handleClickEdit(value)}>Editar</MenuItem>
+        <MenuItem onClick={handleOpenMOdal}>Editar</MenuItem>
         <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
       </Menu>
-      
+      <div>
+          <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description">
+            <Box sx={style}>
+              <IconButton   onClick={handleCloseModal}>
+                <CloseIcon />
+                </IconButton>
+                <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
+                     Editar Reactivo
+                </Typography>
+                <TextField margin="normal" required fullWidth defaultValue={value} id="Nombre" label="Nombre" name="Nombre"  
+                    autoFocus onChange={handleChange}/>
+                <TextField margin="normal" required fullWidth defaultValue={value} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
+                    autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth defaultValue={value} id="Estado Fisico" label="Estado Fisico" name="Estado Fisico"  
+                    autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth defaultValue={value} id="Nombre Ingles" label="Nombre Ingles" name="Nombre Ingles"  
+                    autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth defaultValue={value} id="cas" label="cas" name="cas"  
+                    autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth defaultValue={value} id="Hoja de seguridad" label="Hoja de seguridad" name="Hoja de seguridad"  
+                    autoFocus onChange={handleChange} />
+                <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
+                <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+            </Box>
+        </Modal>
+      </div>
     </>
   )
 }
@@ -106,12 +166,12 @@ const ReactivosList = () => {
 
     const columns = [
       { field: "id", headerName: "ID", width: 70 },
-      { field: "shippingDate", headerName: "Nombre", width: 160 },
-      { field: "stage", headerName: "Sinonimos", width: 150 },
-      { field: "place", headerName: "Estado Fisico", width: 140 },
-      { field: "NamIngle", headerName: "Nombre Ingles", width: 150 },
-      { field: "waste", headerName: "CAS", width: 150 },
-      { field: "containersQuantity", headerName: "Hoja Seguridad", width: 140 },
+      { field: "shippingDate", headerName: "Nombre", width: 160, editable: true },
+      { field: "stage", headerName: "Sinonimos", width: 150, editable: true },
+      { field: "place", headerName: "Estado Fisico", width: 140, editable: true },
+      { field: "NamIngle", headerName: "Nombre Ingles", width: 150, editable: true },
+      { field: "waste", headerName: "CAS", width: 150, editable: true },
+      { field: "containersQuantity", headerName: "Hoja Seguridad", width: 140, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
@@ -183,7 +243,7 @@ const ReactivosList = () => {
               heckboxSelection
               rowsPerPageOptions={[5,10,20]}
               disableRowSelectionOnClick
-              editMode={false}
+              editMode={true}
             />
           </CardContent>
         </Card>
