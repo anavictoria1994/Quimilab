@@ -30,31 +30,66 @@ const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+
+const ActionsButtons = ({params, deleteData, updateData}) => {
+  const {value} = params
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClickDelete = async(reactivoid) => {
+    if(window.confirm("Esta seguro de querer Eliminar este reactivo?")){
+      await deleteData(reactivoid)
+    }
+    setAnchorEl(null);
+  };
+
+  const handleClickEdit = async(reactivoid, nuevoNombre) => {
+    await updateData(reactivoid, nuevoNombre)
+    setAnchorEl(null);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
+  return (
+    <>
+      <Button
+        variant="text"
+        id="basic-button"
+        aria-controls={openMenu ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={openMenu ? "true" : undefined}
+        onClick={handleClick}
+      >
+        Acciones
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        <MenuItem onClick={()=> handleClickEdit(value)}>Editar</MenuItem>
+        <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
+      </Menu>
+      
+    </>
+  )
+}
   
 const ReactivosList = () => {
-    
-    const {reactivos, loading, deleteData, addData } = useAuth();
-    const [anchorEl, setAnchorEl] = useState(null);
-    const openMenu = Boolean(anchorEl);
-    const [open, setOpen] = useState(false);
+   
+    const {reactivos, deleteData, addData, updateData} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
-
-    if(loading.getData) return<p>Cargando Informacion</p>
-
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    
-    const handleClickDelete = async(reactivoid) => {
-      await deleteData(reactivoid)
-      setAnchorEl(null);
-    };
-
-    const handleClickEdit = (reactivoid) => {
-      console.log(reactivoid)
-      setAnchorEl(null);
-    };
-
+    const [open, setOpen] = useState(false);
+  	const [pageSize, setPageSize] = useState(5);
     const handleCloseAlert = (event, reason) => {
       if (reason === 'clickaway') {
         return;
@@ -81,39 +116,12 @@ const ReactivosList = () => {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: (parametros) => {
-          
-          return (
-          <>
-            <Button
-              variant="text"
-              id="basic-button"
-              aria-controls={openMenu ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={openMenu ? "true" : undefined}
-              onClick={handleClick}
-            >
-              Acciones
-            </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={openMenu}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-            >
-              <MenuItem onClick={()=> handleClickEdit(parametros.row.uid)}>Editar</MenuItem>
-              <MenuItem onClick={()=> handleClickDelete(parametros.row.uid)}>Eliminar</MenuItem>
-            </Menu>
-            
-          </>
-        )},
+        renderCell: (parametros) => <ActionsButtons params={parametros} deleteData={deleteData} updateData={updateData}/>,
       },
     ];
+    
     const rows =  reactivos.map((item, indice) => {
-      console.log(indice, item.id)
+      
       return {
           id: indice,
           shippingDate: item.Nombre,
@@ -122,7 +130,7 @@ const ReactivosList = () => {
           containersQuantity: item.HojaSeguridad,
           waste: item.Cas,
           NamIngle: item.NombreIngles,
-          uid: item.id,      
+          actions: item.id,      
       }
     })
     
@@ -170,9 +178,10 @@ const ReactivosList = () => {
             <DataGrid
               rows={rows}
               columns={columns}
-              pageSize={5}
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               heckboxSelection
-              rowsPerPageOptions={[5]}
+              rowsPerPageOptions={[5,10,20]}
               disableRowSelectionOnClick
               editMode={false}
             />

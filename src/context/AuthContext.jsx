@@ -97,6 +97,7 @@ export function AuthProvider ({children}){
                                 navigate("/Invitado")
                                 break
                         default:
+                            navigate("/Invitado")
                             break
                     };
                 });

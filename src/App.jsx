@@ -27,7 +27,6 @@ function App() {
       <Routes>
         <Route path="/Registro" element ={<Registro/>} />
         <Route path="/RecuperarCon" element ={<RecuperarCon/>} />
-        {/* <Route path="/PaginaPrincipal" element ={<PaginaPrincipal/>} /> */}
         <Route path="/Seguimiento" element ={
           <ProtectedRoute>
             <Seguimiento/>

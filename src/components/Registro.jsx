@@ -86,6 +86,17 @@ export function Registro(){
             try{
                 await signup(user.email, user.password, user.Nombre, user.Apellidos, user.tipoDocumento,user.NumDocumento, user.Telefono, user.cargo, user.Rol)
                 setOpenAlert(true);
+                setUser({
+                    Nombre: "",
+                    Apellidos:"",
+                    tipoDocumento:"",
+                    NumDocumento:"",
+                    Telefono:"",
+                    email:"",
+                    cargo:"",
+                    password:"",
+                    password2:"",
+                  });
                 
             }catch(error){
                 console.log(error.Code);
@@ -121,14 +132,14 @@ export function Registro(){
                 </Grid>
                 <Grid item xs={12}  >
                     <box>
-                    <TextField margin="normal" required fullWidth id="Nombre" label="Nombre" name="Nombre"  
+                    <TextField margin="normal" value={user.Nombre} required fullWidth id="Nombre" label="Nombre" name="Nombre"  
                      autoFocus onChange={handleChange} />
                     </box>
                 
                 </Grid>
                 <Grid item xs={12}   sx={{ my: 1 }}>
                     <box>
-                    <TextField margin="normal" required  fullWidth name="Apellidos" label="Apellidos" type="Apellidos"
+                    <TextField margin="normal" value={user.Apellidos} required  fullWidth name="Apellidos" label="Apellidos" type="Apellidos"
                     id="Apellidos" onChange={handleChange} error={error.error} helperText={error.text}/>
                     </box>
                 
@@ -147,11 +158,11 @@ export function Registro(){
                     <MenuItem value={"Carnet"}>Carnet</MenuItem>
                 </Select>
                 </FormControl>
-                <TextField margin="normal" required fullWidth name="NumDocumento" label="Numero de Documento" type="number"
+                <TextField margin="normal" value={user.NumDocumento} required fullWidth name="NumDocumento" label="Numero de Documento" type="number"
                     id="NumDocumento" error={error.error} helperText={error.text} onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth name="Telefono" label="Telefono" type="number" 
+                <TextField margin="normal" value={user.Telefono} required fullWidth name="Telefono" label="Telefono" type="number" 
                     id="Telefono" error={error.error} helperText={error.text} onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth name="email" label="Correo Intitucional" type="email"
+                <TextField margin="normal" value={user.email} required fullWidth name="email" label="Correo Intitucional" type="email"
                     id="email"   error={error.error} helperText={error.text} 
                     onChange={handleChange} 
                 />
@@ -173,9 +184,9 @@ export function Registro(){
                 </Select>
                 </FormControl>
 
-                <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password" 
+                <TextField margin="normal" value={user.password} required fullWidth id="password" label="contraseña" name="password" 
                                 autoComplete="password" type="password" autoFocus   error={errorContra.error} helperText={errorContra.text} onChange={handleChange} />
-                <TextField margin="normal" required fullWidth id="password2" label="Confirme la contraseña" name="password2" 
+                <TextField margin="normal" value={user.password2} required fullWidth id="password2" label="Confirme la contraseña" name="password2" 
                                 autoComplete="password" type="password" autoFocus   error={errorContra.error} helperText={errorContra.text} onChange={handleChange} />
                 
                 <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Enviar Registro</Button>

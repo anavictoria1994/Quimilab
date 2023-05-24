@@ -1,5 +1,5 @@
 import {  createContext, useContext, useState, useEffect } from "react";
-import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc} from "firebase/firestore";
+import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
 
 export const authcontext = createContext()
@@ -17,35 +17,27 @@ export function AuthProviderReactivos({children}) {
     const [loading, setLoading] = useState({});
 
     useEffect(()=>{
-        console.log("getdata")
         getData()
     }, [])
 
     const getData = async ()=>{
         try{
-            setLoading (prev =>({
-                ...prev, getData:true
-            }));
             const querySnapshot = await getDocs(collection(db, "reactivos")); 
-            const dataDB = querySnapshot.docs.map(doc =>({id: doc.id, ...doc.data()}))
-            console.log(dataDB)
+            const dataDB = querySnapshot.docs.map(doc =>{
+                return{
+                    id: doc.id, 
+                    ...doc.data()
+                }
+            })
             setReactivos(dataDB)
         }catch (error){
             console.log(error);
             setError(error.message);
-        }finally{
-            setLoading (prev =>({
-                ...prev, getData:false
-            }));
         }
     }
     
     const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,HojaSe) =>{
         try{
-            setLoading (prev =>({
-                ...prev, addData:true
-            }));
-
             const newDoc = {
                 Nombre:Nombre,
                 Sinonimo:Sinonimos,
@@ -55,15 +47,13 @@ export function AuthProviderReactivos({children}) {
                 HojaSeguridad: HojaSe
             }
             const docRef = doc(collection(db, "reactivos"));
-            await setDoc(docRef, newDoc);
-            setReactivos([...reactivos, newDoc])
+            await setDoc(docRef, newDoc).then(doc => {
+                console.log(doc)
+                getData()
+            })
             }catch(error){
                 setError(error.message);
-            }finally{
-                setLoading (prev =>({
-                    ...prev, addData:false
-                }));
-            } 
+            }
     }
 
     const deleteData = async (reactivosid) =>{
@@ -83,6 +73,20 @@ export function AuthProviderReactivos({children}) {
             } 
     }
 
+    const updateData = async(reactivosid, nombreReactivo)=>{
+        try{
+            const docRef = doc(db, "reactivos", reactivosid);
+            await updateDoc (docRef, {
+                Nombre:nombreReactivo,
+            }).then(doc => {
+                console.log(doc)
+                getData()
+            })
+            }catch(error){
+                setError(error.message);
+            }
+    }
+
     
     
     return(
@@ -93,6 +97,7 @@ export function AuthProviderReactivos({children}) {
         addData,
         getData,
         deleteData,
+        updateData
         }}>
             {children}
         </authcontext.Provider>

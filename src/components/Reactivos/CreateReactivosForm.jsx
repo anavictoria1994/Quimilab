@@ -27,7 +27,7 @@ const CreateReactivosForm = ({onAdd}) => {
       setOpenAlert(false);
   };  
   
-  const [rectivos, setReactivos] = useState({
+  const [ingresarectivos, setReactivos] = useState({
     Nombre: "",
     Sinonimos: "",
     NombreIn: "",
@@ -43,14 +43,21 @@ const CreateReactivosForm = ({onAdd}) => {
   });
 
   const handleChange = ({target: {name, value}}) =>{ 
-    setReactivos({...rectivos,[name]:value})
+    setReactivos({...ingresarectivos,[name]:value})
   };
   
   const handleSubmit = async(e) =>{
     e.preventDefault();
-
+    if(!ingresarectivos.Nombre.trim() || !ingresarectivos.Sinonimos.trim || !ingresarectivos.EstadoFi.trim){
+      setError({
+        error: true,
+        text: "Debe llenar todos los campos",
+      });
+      return;  
+    }
     try{
-      await onAdd(rectivos.Nombre, rectivos.Sinonimos, rectivos.NombreIn, rectivos.Cas, rectivos.EstadoFi, rectivos.HojaSe)
+      await onAdd(ingresarectivos.Nombre, ingresarectivos.Sinonimos, ingresarectivos.NombreIn, ingresarectivos.Cas, ingresarectivos.EstadoFi, ingresarectivos.HojaSe)
+      
       setOpenAlert(true);
       setReactivos({
         Nombre: "",
@@ -73,20 +80,20 @@ const CreateReactivosForm = ({onAdd}) => {
     <Container >
       <Grid container sx={{ p: 10 }} spacing={6}>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
-          <TextField  required value={rectivos.Nombre} fullWidth label="Nombre  Reactivo" name="Nombre" onChange={handleChange}/>
+          <TextField  required value={ingresarectivos.Nombre} fullWidth label="Nombre  Reactivo" name="Nombre" error={error.error} helperText={error.text} onChange={handleChange}/>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
-          <TextField required value={rectivos.Sinonimos} fullWidth label="Sinonimos" name="Sinonimos" onChange={handleChange}/>
+          <TextField required value={ingresarectivos.Sinonimos} error={error.error} helperText={error.text} fullWidth label="Sinonimos" name="Sinonimos" onChange={handleChange}/>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
-          <TextField required value={rectivos.NombreIn} fullWidth label="Nombre en Ingles" name="NombreIn" onChange={handleChange}/>
+          <TextField required value={ingresarectivos.NombreIn} error={error.error} helperText={error.text} fullWidth label="Nombre en Ingles" name="NombreIn" onChange={handleChange}/>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
-          <TextField required value={rectivos.Cas} fullWidth label="Numero CAS" name="Cas" onChange={handleChange}/>
+          <TextField required value={ingresarectivos.Cas} error={error.error} helperText={error.text}fullWidth label="Numero CAS" name="Cas" onChange={handleChange}/>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
           <FormControl fullWidth required>
-            <InputLabel id="select-label" >Estado Fisico</InputLabel>
+            <InputLabel error={error.error} helperText={error.text} id="select-label" >Estado Fisico</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="tipoDocumento"
@@ -102,7 +109,7 @@ const CreateReactivosForm = ({onAdd}) => {
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
           <FormControl fullWidth required>
-            <InputLabel id="select-label" >Hoja de Seguridad</InputLabel>
+            <InputLabel error={error.error} helperText={error.text} id="select-label" >Hoja de Seguridad</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="hojaSeguridad"
