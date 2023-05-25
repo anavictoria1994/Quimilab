@@ -70,8 +70,11 @@ export function RecuperarCon(){
         <>
             <Box  sx={style}  onSubmit={handleSubmit}>
               
-                <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
+                <Typography id="modal-modal-title" variant="h8" component="h2" align="center">
                     Recuperar contraseña
+                </Typography>
+                <Typography id="modal-modal-title" variant="h6" subtitle1='h3' align="justify">
+                    Por favor ingresar su correo y pronto recibirá un mensaje con un link a la nueva contraseña 
                 </Typography>
                 <TextField margin="normal" required fullWidth id="email" label="email" name="email"  
                      autoFocus onChange={handleChange} error={error.error} helperText={error.text}/>

@@ -57,8 +57,7 @@ const invitado = {
   "Mi Perfil": {
     link: "/PerfilUsuario",
     icono: <DashboardIcon />
-  },
-  // "Reportes": <BarChartIcon />,
+   },
 }
 
 export const MainListItems = () => {

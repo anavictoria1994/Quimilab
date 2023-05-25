@@ -8,6 +8,7 @@ import {Invitado} from "./components/Invitado";
 import {Operador} from "./components/Operador";
 import {Registro} from "./components/Registro";
 import {AuthProvider} from "./context/AuthContext";
+import {AuthProviderReactivos} from "./hooks/AuthContextReactivos";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ProtectedRouteHome } from "./components/ProtectedRouteHome";
 import { Seguimiento } from "./rutasComponents/Seguimiento";
@@ -21,11 +22,11 @@ function App() {
 
   return (
     <AuthProvider>
+      <AuthProviderReactivos>
       <ContenedorPrincipal>
       <Routes>
         <Route path="/Registro" element ={<Registro/>} />
         <Route path="/RecuperarCon" element ={<RecuperarCon/>} />
-        {/* <Route path="/PaginaPrincipal" element ={<PaginaPrincipal/>} /> */}
         <Route path="/Seguimiento" element ={
           <ProtectedRoute>
             <Seguimiento/>
@@ -77,6 +78,7 @@ function App() {
         </ProtectedRouteHome>} />
       </Routes>
       </ContenedorPrincipal>
+      </AuthProviderReactivos>
     </AuthProvider>
   );
 }

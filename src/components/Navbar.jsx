@@ -69,6 +69,7 @@ const Navbar = () =>{
     const handleSubmitGoogle =  async(event) =>{
         try{
             await loginWithGoogle()
+            
         }catch(error){
             setError({
                 error: true,

@@ -1,8 +1,7 @@
 
 import { forwardRef,useState} from "react";
 import { useAuth } from "../context/AuthContext";
-import Container from '@mui/material/Container';
-import { Box, Button, TextField, Typography, Select, MenuItem, InputLabel, FormControl, Link } from "@mui/material";
+import { Box, Button, TextField, Grid, Typography, Select, MenuItem, InputLabel, FormControl, Link } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
@@ -20,7 +19,7 @@ const style = {
     border: '1px solid error.main',
     borderRadius: '2%',
     boxShadow: 24,
-    p: 4,
+    p: 3,
     
 };
 
@@ -84,10 +83,21 @@ export function Registro(){
             error: false,
             text:"",
             });
-            console.log(user.Nombre)
             try{
                 await signup(user.email, user.password, user.Nombre, user.Apellidos, user.tipoDocumento,user.NumDocumento, user.Telefono, user.cargo, user.Rol)
                 setOpenAlert(true);
+                setUser({
+                    Nombre: "",
+                    Apellidos:"",
+                    tipoDocumento:"",
+                    NumDocumento:"",
+                    Telefono:"",
+                    email:"",
+                    cargo:"",
+                    password:"",
+                    password2:"",
+                  });
+                
             }catch(error){
                 console.log(error.Code);
                
@@ -104,21 +114,36 @@ export function Registro(){
                 text:"Formato de email incorrecto",
             });
         }
-        
+               
     }
 
   
     return (
         <>
-        <Container maxWidth="md">
+        <Grid container  >
             <Box  sx={style}  onSubmit={handleSubmit}>
-                <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
+                <Grid item xs={12} >
+                    <box>
+                    <Typography id="modal-modal-title" variant="h6" component="h2" align="justi">
                     Solicitud de Registro
-                </Typography>
-                <TextField margin="normal" required fullWidth id="Nombre" label="Nombre" name="Nombre"  
+                    </Typography>
+                    </box>
+                
+                </Grid>
+                <Grid item xs={12}  >
+                    <box>
+                    <TextField margin="normal" value={user.Nombre} required fullWidth id="Nombre" label="Nombre" name="Nombre"  
                      autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth name="Apellidos" label="Apellidos" type="Apellidos"
+                    </box>
+                
+                </Grid>
+                <Grid item xs={12}   sx={{ my: 1 }}>
+                    <box>
+                    <TextField margin="normal" value={user.Apellidos} required  fullWidth name="Apellidos" label="Apellidos" type="Apellidos"
                     id="Apellidos" onChange={handleChange} error={error.error} helperText={error.text}/>
+                    </box>
+                
+                </Grid>
                 <FormControl fullWidth margin="normal">
                 <InputLabel id="select-label" >Tipo de Documento</InputLabel>
                 <Select
@@ -133,11 +158,11 @@ export function Registro(){
                     <MenuItem value={"Carnet"}>Carnet</MenuItem>
                 </Select>
                 </FormControl>
-                <TextField margin="normal" required fullWidth name="NumDocumento" label="Numero de Documento" type="number"
+                <TextField margin="normal" value={user.NumDocumento} required fullWidth name="NumDocumento" label="Numero de Documento" type="number"
                     id="NumDocumento" error={error.error} helperText={error.text} onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth name="Telefono" label="Telefono" type="number" 
+                <TextField margin="normal" value={user.Telefono} required fullWidth name="Telefono" label="Telefono" type="number" 
                     id="Telefono" error={error.error} helperText={error.text} onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth name="email" label="Correo Intitucional" type="email"
+                <TextField margin="normal" value={user.email} required fullWidth name="email" label="Correo Intitucional" type="email"
                     id="email"   error={error.error} helperText={error.text} 
                     onChange={handleChange} 
                 />
@@ -152,31 +177,32 @@ export function Registro(){
                     onChange={handleChange}
                 >
                     <MenuItem value={"Laboratorista"}>Laboratorista</MenuItem>
+                    <MenuItem value={"Profesor"}>Profesor</MenuItem>
                     <MenuItem value={"Estudiante"}>Estudiante</MenuItem>
                     <MenuItem value={"Practicante"}>Practicante</MenuItem>
                     <MenuItem value={"Servicios"}>Servicios Varios</MenuItem>
                 </Select>
                 </FormControl>
 
-                <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password" 
+                <TextField margin="normal" value={user.password} required fullWidth id="password" label="contraseña" name="password" 
                                 autoComplete="password" type="password" autoFocus   error={errorContra.error} helperText={errorContra.text} onChange={handleChange} />
-                <TextField margin="normal" required fullWidth id="password2" label="Confirme la contraseña" name="password2" 
+                <TextField margin="normal" value={user.password2} required fullWidth id="password2" label="Confirme la contraseña" name="password2" 
                                 autoComplete="password" type="password" autoFocus   error={errorContra.error} helperText={errorContra.text} onChange={handleChange} />
                 
                 <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Enviar Registro</Button>
                 
                 <Link href="/" variant="body2"  color="#FF0000">
                     Salir
-                </Link>        
+                </Link> 
+                       
             </Box>
-            
-        </Container>
-        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-            Ingreso exitoso!
-        </Alert>
-    </Snackbar>
-    </>
+            </Grid>
+            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                    Ingreso exitoso!
+                </Alert>
+            </Snackbar>
+        </>
     )
 }
 
