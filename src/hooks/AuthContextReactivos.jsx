@@ -73,11 +73,16 @@ export function AuthProviderReactivos({children}) {
             } 
     }
 
-    const updateData = async(reactivosid, nombreReactivo)=>{
+    const updateData = async(reactivosid, nombreReactivo,SinonimosReactivo,NombreInReactivo,CasReactivo,EstadoFiReactivo,HojaSeReactivo )=>{
         try{
             const docRef = doc(db, "reactivos", reactivosid);
             await updateDoc (docRef, {
                 Nombre:nombreReactivo,
+                Sinonimo:SinonimosReactivo,
+                NombreIngles:NombreInReactivo,
+                Cas:CasReactivo, 
+                EstadoFisico:EstadoFiReactivo,
+                HojaSeguridad: HojaSeReactivo
             }).then(doc => {
                 console.log(doc)
                 getData()

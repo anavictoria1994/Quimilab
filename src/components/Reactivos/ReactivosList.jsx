@@ -47,7 +47,7 @@ const style = {
 };
 
 const ActionsButtons = ({params, deleteData, updateData}) => {
-
+  
   const [openModal, setOpenModal] = useState(false);
   const handleOpenMOdal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -79,7 +79,9 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   };
 
   const handleClickEdit = async(reactivoid) => {
+   
     await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
+    console.log("se edito correctamente")
     setAnchorEl(null);
   };
   const handleClose = () => {
@@ -123,17 +125,17 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Reactivo
                 </Typography>
-                <TextField margin="normal" required fullWidth defaultValue={value} id="Nombre" label="Nombre" name="Nombre"  
+                <TextField margin="normal" required fullWidth value={newReactivo.Nombre} defaultValue={params.row.nameReactivo} id="Nombre" label="Nombre" name="Nombre"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth defaultValue={value} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
+                <TextField margin="normal" required fullWidth value={newReactivo.Sinonimos} defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth defaultValue={value} id="Estado Fisico" label="Estado Fisico" name="Estado Fisico"  
+                <TextField margin="normal" required fullWidth value={newReactivo.EstadoFi} defaultValue={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth defaultValue={value} id="Nombre Ingles" label="Nombre Ingles" name="Nombre Ingles"  
+                <TextField margin="normal" required fullWidth value={newReactivo.NombreIn} defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth defaultValue={value} id="cas" label="cas" name="cas"  
+                <TextField margin="normal" required fullWidth value={newReactivo.Cas} defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth defaultValue={value} id="Hoja de seguridad" label="Hoja de seguridad" name="Hoja de seguridad"  
+                <TextField margin="normal" required fullWidth value={newReactivo.HojaSe} defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
@@ -166,17 +168,17 @@ const ReactivosList = () => {
 
     const columns = [
       { field: "id", headerName: "ID", width: 70 },
-      { field: "shippingDate", headerName: "Nombre", width: 160, editable: true },
-      { field: "stage", headerName: "Sinonimos", width: 150, editable: true },
-      { field: "place", headerName: "Estado Fisico", width: 140, editable: true },
+      { field: "nameReactivo", headerName: "Nombre", width: 160, editable: true },
+      { field: "sinonimoReactivo", headerName: "Sinonimos", width: 150, editable: true },
+      { field: "estadoFisico", headerName: "Estado Fisico", width: 140, editable: true },
       { field: "NamIngle", headerName: "Nombre Ingles", width: 150, editable: true },
-      { field: "waste", headerName: "CAS", width: 150, editable: true },
-      { field: "containersQuantity", headerName: "Hoja Seguridad", width: 140, editable: true },
+      { field: "casReactivo", headerName: "CAS", width: 150, editable: true },
+      { field: "hojaSeguridad", headerName: "Hoja Seguridad", width: 140, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: (parametros) => <ActionsButtons params={parametros} deleteData={deleteData} updateData={updateData}/>,
+        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData}/>,
       },
     ];
     
@@ -184,11 +186,11 @@ const ReactivosList = () => {
       
       return {
           id: indice,
-          shippingDate: item.Nombre,
-          stage: item.Sinonimo,
-          place: item.EstadoFisico,
-          containersQuantity: item.HojaSeguridad,
-          waste: item.Cas,
+          nameReactivo: item.Nombre,
+          sinonimoReactivo: item.Sinonimo,
+          estadoFisico: item.EstadoFisico,
+          hojaSeguridad: item.HojaSeguridad,
+          casReactivo: item.Cas,
           NamIngle: item.NombreIngles,
           actions: item.id,      
       }
