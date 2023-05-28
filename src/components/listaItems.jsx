@@ -22,7 +22,7 @@ const generador = {
     icono: <DashboardIcon />
    },
    "Declaraciones": {
-    
+
     link: "/Statements",
     icono: <BarChartIcon />,
    },

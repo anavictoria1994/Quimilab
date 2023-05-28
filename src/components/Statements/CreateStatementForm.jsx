@@ -16,9 +16,18 @@ import {
   Paper,
   Container,
   IconButton,
+  Divider
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import React, { useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import CreateWasteForm from "./CreateWasteForm";
 
 const CreateStatementForm = () => {
   const [age, setAge] = useState("");
@@ -28,6 +37,9 @@ const CreateStatementForm = () => {
       reactivo: "Reactivo 1",
     },
   ]);
+  const [value, setValue] = useState(dayjs());
+  const [openWaste, setOpenWaste] = useState(false);
+  
   const handleChange = (event) => {
     setAge(event.target.value);
   };
@@ -39,6 +51,10 @@ const CreateStatementForm = () => {
     };
     setRowsWaste([...rowsWaste, n]);
   };
+
+  const handleChangeOpenWaste = () => {
+    setOpenWaste(!openWaste)
+  }
 
   return (
     <Container>
@@ -59,26 +75,33 @@ const CreateStatementForm = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Nombre residuo" />
-        </Grid>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
           <TextField label="Generador" placeholder="Generador actual" />
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Fecha de declaración" />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+           <DatePicker
+                label="Fecha de creación"
+                value={value}
+                disabled
+                onChange={(newValue) => {setValue(newValue); alert(newValue)}}
+              />
+          </LocalizationProvider>
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Fecha de revisión" />
+          <TextField label="Fecha de revisión" value="pendiente" disabled/>
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Fecha de recepción" />
+          <TextField label="Fecha de recepción" value="pendiente" disabled/>
         </Grid>
         <Grid item xs={12} md={12} sx={{ mt: 2 }}>
           <Typography variant="subtitle">Residuos</Typography>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 1 }}>
-          <Button onClick={() => c()}>Añadir</Button>
+          {!openWaste && <Button onClick={() => handleChangeOpenWaste()}>Añadir</Button>}
+          {openWaste && <IconButton>y</IconButton>}
+        {openWaste && <IconButton>n</IconButton>}
         </Grid>
+        {openWaste && <CreateWasteForm/>}
         <Grid item xs={12} md={12} sx={{ my: 1 }}>
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
@@ -103,12 +126,21 @@ const CreateStatementForm = () => {
                       <IconButton
                         size="small"
                         sx={{
-                          bgcolor: "#FF0000",
-                          color: "white",
+                          bgcolor: "white",
+                          color: "#FF0000"
                         }}
                         variant="contained"
                       >
-                        El
+                        <DeleteIcon/>
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        sx={{
+                          bgcolor: "white"
+                        }}
+                        variant="contained"
+                      >
+                        <EditIcon color="warning"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -117,8 +149,16 @@ const CreateStatementForm = () => {
             </Table>
           </TableContainer>
         </Grid>
-        <Grid item xs={12} md={12} sx={{ my: 3, textAlign:"center" }}>
-          <Button variant="contained" color="success" sx={{width:"30%"}}>Crear</Button>
+        <Divider sx={{width:"100%", mt:2, bgcolor:"black"}}/>
+        <Grid item xs={12} md={6} sx={{ my: 3, textAlign: "center" }}>
+          <Button variant="contained" color="error" sx={{ width: "30%" }}>
+            Crear
+          </Button>
+        </Grid>
+        <Grid item xs={12} md={6} sx={{ my: 3, textAlign: "center" }}>
+          <Button variant="contained" color="inherit" sx={{ width: "30%" }}>
+            Cancelar
+          </Button>
         </Grid>
       </Grid>
     </Container>
