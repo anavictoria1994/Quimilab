@@ -151,8 +151,6 @@ const ReactivosList = () => {
     const {reactivos, deleteData, addData, updateData} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
-
-
     const [search, setSearch] = useState("");
 
     const handleChange =(evento) =>{

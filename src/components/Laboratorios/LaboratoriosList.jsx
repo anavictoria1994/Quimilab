@@ -61,7 +61,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     email: "",
   });
   const [openAler, setOpenAlert] = useState(false);
-  
+   
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -160,6 +160,12 @@ const LaboratoriosList = () => {
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
+    const [searchLaboratorio, setSearchLaboratorio] = useState("");
+
+    const handleChangeBusLab =(evento) =>{
+      setSearchLaboratorio(evento.target.value)
+    } 
+
 
     const handleChange =(evento) =>{
         setSearch(evento.target.value)
@@ -194,7 +200,7 @@ const LaboratoriosList = () => {
       },
     ];
     
-    const rows =  laboratorios.map((item, indice) => {
+    const rows =  laboratorios.filter(dato=>dato.nombreLaboratorio.toLowerCase().includes(searchLaboratorio)).map((item, indice) => {
       
       return {
           id: indice,
@@ -237,8 +243,8 @@ const LaboratoriosList = () => {
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Buscar Laboratorio"
                     inputProps={{ "aria-label": "search google maps" }}
-                    value={search}
-                    onChange={handleChange}
+                    value={searchLaboratorio}
+                    onChange={handleChangeBusLab}
                   />
                   <IconButton
                     type="button"
