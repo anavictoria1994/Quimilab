@@ -57,7 +57,6 @@ const CreateReactivosForm = ({onAdd}) => {
     }
     try{
       await onAdd(ingresarectivos.Nombre, ingresarectivos.Sinonimos, ingresarectivos.NombreIn, ingresarectivos.Cas, ingresarectivos.EstadoFi, ingresarectivos.HojaSe)
-      
       setOpenAlert(true);
       setReactivos({
         Nombre: "",

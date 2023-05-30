@@ -54,6 +54,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+
   const [newReactivo, setNewReactivo] = useState({
     Nombre: "",
     Sinonimos: "",
@@ -79,7 +80,6 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   };
 
   const handleClickEdit = async(reactivoid) => {
-   
     await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
     console.log("se edito correctamente")
     setAnchorEl(null);
@@ -125,17 +125,17 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Reactivo
                 </Typography>
-                <TextField margin="normal" required fullWidth value={newReactivo.Nombre} defaultValue={params.row.nameReactivo} id="Nombre" label="Nombre" name="Nombre"  
+                <TextField margin="normal"  fullWidth    value={ params.row.nameReactivo } id="Nombre" label="Nombre" name="Nombre"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={newReactivo.Sinonimos} defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
+                <TextField margin="normal"  fullWidth   value={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.EstadoFi} defaultValue={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
+                <TextField margin="normal"  fullWidth   value={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.NombreIn} defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
+                <TextField margin="normal"  fullWidth   value={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.Cas} defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
+                <TextField margin="normal"  fullWidth   value={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.HojaSe} defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
+                <TextField margin="normal"  fullWidth   value={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
@@ -147,11 +147,15 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
 }
   
 const ReactivosList = () => {
-   
+    const [search, setSearch] = useState("");
     const {reactivos, deleteData, addData, updateData} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
   	const [pageSize, setPageSize] = useState(5);
+
+    const handleChange =(evento) =>{
+      setSearch(evento.target.value)
+    }
     const handleCloseAlert = (event, reason) => {
       if (reason === 'clickaway') {
         return;
@@ -182,8 +186,7 @@ const ReactivosList = () => {
       },
     ];
     
-    const rows =  reactivos.map((item, indice) => {
-      
+    const rows =  reactivos.filter(dato=>dato.Nombre.toLowerCase().includes(search)).map((item, indice) => {
       return {
           id: indice,
           nameReactivo: item.Nombre,
@@ -224,8 +227,10 @@ const ReactivosList = () => {
                 >
                   <InputBase
                     sx={{ ml: 1, flex: 1 }}
-                    placeholder="Buscar Reactivo"
+                    placeholder="Buscar por Nombre de Reactivo"
                     inputProps={{ "aria-label": "search google maps" }}
+                    value={search}
+                    onChange={handleChange}
                   />
                   <IconButton
                     type="button"
@@ -238,11 +243,16 @@ const ReactivosList = () => {
               </Grid>
             </Grid>
             <DataGrid
+            
               rows={rows}
               columns={columns}
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-              heckboxSelection
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+                },
+              }}
               rowsPerPageOptions={[5,10,20]}
               disableRowSelectionOnClick
               editMode={true}

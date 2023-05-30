@@ -48,7 +48,6 @@ export function AuthProviderReactivos({children}) {
             }
             const docRef = doc(collection(db, "reactivos"));
             await setDoc(docRef, newDoc).then(doc => {
-                console.log(doc)
                 getData()
             })
             }catch(error){
