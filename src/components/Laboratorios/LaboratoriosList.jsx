@@ -1,11 +1,10 @@
 import React from "react";
 import { forwardRef,useState } from "react";
-import { useAuth } from "../../hooks/AuthContextReactivos";
+import { useAuth } from "../../hooks/AuthContextLaboratorios";
 import {
   Card,
   CardContent,
   CardHeader,
-  Container,
   Button,
   IconButton,
   Grid,
@@ -24,7 +23,7 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import CreateReactivosForm from "./CreateReactivosForm";
+import CreateLaboratoriosForm from "./CreateLaboratoriosForm";
 import CloseIcon from '@mui/icons-material/Close';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -54,34 +53,40 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
-
-  const [newReactivo, setNewReactivo] = useState({
-    Nombre: "",
-    Sinonimos: "",
-    NombreIn: "",
-    Cas: "",
-    EstadoFi: "",
-    HojaSe: "",
+  const [newLaboratorio, setNewLaboratorio] = useState({
+    fechaRegistro: "",
+    nombreLaboratorio: "",
+    coordinador: "",
+    telefono: "",
+    email: "",
   });
+  const [openAler, setOpenAlert] = useState(false);
+   
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+      setOpenAlert(false);
+  }; 
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   
   const handleChange = ({target: {name, value}}) =>{ 
-    setNewReactivo({...newReactivo,[name]:value})
+    setNewLaboratorio({...newLaboratorio,[name]:value})
   };
 
-  const handleClickDelete = async(reactivoid) => {
+  const handleClickDelete = async(laboratorioid) => {
     if(window.confirm("Esta seguro de querer Eliminar este reactivo?")){
-      await deleteData(reactivoid)
+      await deleteData(laboratorioid)
     }
     setAnchorEl(null);
   };
 
-  const handleClickEdit = async(reactivoid) => {
-    await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
-    console.log("se edito correctamente")
+  const handleClickEdit = async(laboratorioid) => {
+    await updateData(laboratorioid, newLaboratorio.fechaRegistro, newLaboratorio.nombreLaboratorio, newLaboratorio.coordinador, newLaboratorio.telefono,newLaboratorio.email)
+    setOpenAlert(true);
     setAnchorEl(null);
   };
   const handleClose = () => {
@@ -123,22 +128,25 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <CloseIcon />
                 </IconButton>
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
-                     Editar Reactivo
+                     Editar Laboratorio
                 </Typography>
-                <TextField margin="normal"  fullWidth    value={ params.row.nameReactivo } id="Nombre" label="Nombre" name="Nombre"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal"  fullWidth   value={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
+                <TextField margin="normal" required fullWidth value={newLaboratorio.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal"  fullWidth   value={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal"  fullWidth   value={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal"  fullWidth   value={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
-                    autoFocus onChange={handleChange} />
-                <TextField margin="normal"  fullWidth   value={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                              Laboratorio Editado Correctamente!
+                  </Alert>
+                </Snackbar>
             </Box>
         </Modal>
       </div>
@@ -146,24 +154,23 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   )
 }
   
-const ReactivosList = () => {
-    const [search, setSearch] = useState("");
-    const {reactivos, deleteData, addData, updateData} = useAuth();
+const LaboratoriosList = () => {
+   
+    const {laboratorios, deleteData, addData, updateData} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
-<<<<<<< HEAD
-  	const [pageSize, setPageSize] = useState(5);
-=======
     const [search, setSearch] = useState("");
->>>>>>> 66c157511e259a73794dd66dcb983a2044e54294
+    const [searchLaboratorio, setSearchLaboratorio] = useState("");
+
+    const handleChangeBusLab =(evento) =>{
+      setSearchLaboratorio(evento.target.value)
+    } 
+
 
     const handleChange =(evento) =>{
-      setSearch(evento.target.value)
+        setSearch(evento.target.value)
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 66c157511e259a73794dd66dcb983a2044e54294
     const handleCloseAlert = (event, reason) => {
       if (reason === 'clickaway') {
         return;
@@ -180,12 +187,11 @@ const ReactivosList = () => {
 
     const columns = [
       { field: "id", headerName: "ID", width: 70 },
-      { field: "nameReactivo", headerName: "Nombre", width: 160, editable: true },
-      { field: "sinonimoReactivo", headerName: "Sinonimos", width: 150, editable: true },
-      { field: "estadoFisico", headerName: "Estado Fisico", width: 140, editable: true },
-      { field: "NamIngle", headerName: "Nombre Ingles", width: 150, editable: true },
-      { field: "casReactivo", headerName: "CAS", width: 150, editable: true },
-      { field: "hojaSeguridad", headerName: "Hoja Seguridad", width: 140, editable: true },
+      { field: "Fecha", headerName: "Fecha de registro", width: 160, editable: true },
+      { field: "NombreLab", headerName: "Nombre del laboratorio", width: 150, editable: true },
+      { field: "Coord", headerName: "Coordinador", width: 140, editable: true },
+      { field: "Tel", headerName: "Teléfono", width: 150, editable: true },
+      { field: "Correo", headerName: "Email", width: 150, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
@@ -194,28 +200,24 @@ const ReactivosList = () => {
       },
     ];
     
-    const rows =  reactivos.filter(dato=>dato.Nombre.toLowerCase().includes(search)).map((item, indice) => {
-<<<<<<< HEAD
-=======
+    const rows =  laboratorios.filter(dato=>dato.nombreLaboratorio.toLowerCase().includes(searchLaboratorio)).map((item, indice) => {
       
->>>>>>> 66c157511e259a73794dd66dcb983a2044e54294
       return {
           id: indice,
-          nameReactivo: item.Nombre,
-          sinonimoReactivo: item.Sinonimo,
-          estadoFisico: item.EstadoFisico,
-          hojaSeguridad: item.HojaSeguridad,
-          casReactivo: item.Cas,
-          NamIngle: item.NombreIngles,
+          Fecha: item.fechaRegistro,
+          NombreLab: item.nombreLaboratorio,
+          Coord: item.coordinador,
+          Tel: item.telefono,
+          Correo: item.email,
           actions: item.id,      
       }
     })
     
     
     return (
-      <Container sx={{ my: 3 }}>
+      <div>
         <Card elevation={5}>
-          <CardHeader title="Reactivos" sx={{ textAlign: "center" }} />
+          <CardHeader title="Laboratorios" sx={{ textAlign: "center" }} />
           <CardContent>
             <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid item md={2} sx={{ flexGrow: 1 }}>
@@ -239,10 +241,10 @@ const ReactivosList = () => {
                 >
                   <InputBase
                     sx={{ ml: 1, flex: 1 }}
-                    placeholder="Buscar por Nombre de Reactivo"
+                    placeholder="Buscar Laboratorio"
                     inputProps={{ "aria-label": "search google maps" }}
-                    value={search}
-                    onChange={handleChange}
+                    value={searchLaboratorio}
+                    onChange={handleChangeBusLab}
                   />
                   <IconButton
                     type="button"
@@ -255,25 +257,15 @@ const ReactivosList = () => {
               </Grid>
             </Grid>
             <DataGrid
-            
               rows={rows}
               columns={columns}
-<<<<<<< HEAD
-              pageSize={pageSize}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-=======
               heckboxSelection
->>>>>>> 66c157511e259a73794dd66dcb983a2044e54294
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 5 },
                 },
               }}
-<<<<<<< HEAD
-              rowsPerPageOptions={[5,10,20]}
-=======
               rowsPerPageOptions={[5,10]}
->>>>>>> 66c157511e259a73794dd66dcb983a2044e54294
               disableRowSelectionOnClick
               editMode={true}
             />
@@ -286,19 +278,19 @@ const ReactivosList = () => {
         </IconButton>
         </Box>
           <DialogTitle sx={{ textAlign: "center" }}>
-            Registro de Reactivos
+            Registro de Laboratorios
           </DialogTitle>
           <DialogContent>
-            <CreateReactivosForm onAdd={addData}/>
+            <CreateLaboratoriosForm onAdd={addData}/>
           </DialogContent>
         </Dialog>
         <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
         <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-                    Reactivo Eliminado Correctamente!
+            Laboratorio Eliminado Correctamente!
         </Alert>
       </Snackbar>
-      </Container>
+      </div>
     );
 };
 
-export default ReactivosList;
+export default LaboratoriosList;
