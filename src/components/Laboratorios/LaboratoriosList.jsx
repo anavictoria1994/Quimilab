@@ -19,6 +19,8 @@ import {
   Modal,
   Typography,
   Box,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -46,10 +48,8 @@ const style = {
 };
 
 const ActionsButtons = ({params, deleteData, updateData}) => {
-  
+  const {laboratorios} = useAuth();
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenMOdal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
@@ -61,7 +61,12 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     email: "",
   });
   const [openAler, setOpenAlert] = useState(false);
-  
+  const [openDialogDelete, setOpenDialogDelete] = React.useState(false);
+
+  const handleOpenMOdal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+  const handleOpenDialogDelete = () => setOpenDialogDelete(true);
+  const handleCloseDialogDelete = () => setOpenDialogDelete(false);
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -78,9 +83,8 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   };
 
   const handleClickDelete = async(laboratorioid) => {
-    if(window.confirm("Esta seguro de querer Eliminar este reactivo?")){
-      await deleteData(laboratorioid)
-    }
+    await deleteData(laboratorioid);
+    setOpenAlert(true);
     setAnchorEl(null);
   };
 
@@ -115,9 +119,8 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
         }}
       >
         <MenuItem onClick={handleOpenMOdal}>Editar</MenuItem>
-        <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
+        <MenuItem onClick={handleOpenDialogDelete}>Eliminar</MenuItem>
       </Menu>
-      <div>
           <Modal
           open={openModal}
           onClose={handleCloseModal}
@@ -130,34 +133,62 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Laboratorio
                 </Typography>
-                <TextField margin="normal" required fullWidth value={newLaboratorio.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
+                <TextField margin="normal" required fullWidth value={laboratorios.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={newLaboratorio.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
+                <TextField margin="normal" required fullWidth value={laboratorios.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
+                <TextField margin="normal" required fullWidth value={laboratorios.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
+                <TextField margin="normal" required fullWidth value={laboratorios.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
+                <TextField margin="normal" required fullWidth value={laboratorios.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
-                <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+                <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>             
                 <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-                              Laboratorio Editado Correctamente!
+                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%'}}>
+                    Laboratorio Editado Correctamente!
                   </Alert>
                 </Snackbar>
-            </Box>
+            </Box>           
         </Modal>
+        
+      <div>
+        <Dialog
+          open={openDialogDelete}
+          onClose={handleCloseDialogDelete}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"¿Estás seguro?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Este laboratorio se elimarará definitivamente 
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={()=> handleClickDelete(value)}>Eliminar</Button>
+            <Button onClick={handleCloseDialogDelete} autoFocus>
+              Cancelar
+            </Button>
+            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+              Laboratorio Eliminado Correctamente!
+            </Alert>
+          </Snackbar>
+          </DialogActions>
+          
+        </Dialog>
+        
       </div>
     </>
   )
 }
   
 const LaboratoriosList = () => {
-   
     const {laboratorios, deleteData, addData, updateData} = useAuth();
-    const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
 
@@ -165,13 +196,6 @@ const LaboratoriosList = () => {
         setSearch(evento.target.value)
     }
 
-    const handleCloseAlert = (event, reason) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      setOpenAlert(false);
-    }; 
-    
     const openDialogCreate = () => {
       setOpen(true);
     };
@@ -194,7 +218,7 @@ const LaboratoriosList = () => {
       },
     ];
     
-    const rows =  laboratorios.map((item, indice) => {
+    const rows =  laboratorios.filter(dato=>dato.nombreLaboratorio.toLowerCase().includes(search)).map((item, indice) => {
       
       return {
           id: indice,
@@ -206,7 +230,6 @@ const LaboratoriosList = () => {
           actions: item.id,      
       }
     })
-    
     
     return (
       <div>
@@ -265,24 +288,19 @@ const LaboratoriosList = () => {
             />
           </CardContent>
         </Card>
-        <Dialog open={open} onClose={() => handleClose()} fullScreen sx={{mx:{xs: 4, md:20}, my:{xs:4,md:10}} } >
+        <Dialog open={open} onClose={() => handleClose()} PaperProps={{sx: {position:'relative', top:0, left:50, m:0, width:'30%', height:'100%'}}}>
         <Box>
         <IconButton  onClick={handleClose} >
             <CloseIcon />
         </IconButton>
         </Box>
-          <DialogTitle sx={{ textAlign: "center" }}>
+          <DialogTitle sx={{ position:'relative',top:0, m:0, textAlign: "center" }}>
             Registro de Laboratorios
           </DialogTitle>
           <DialogContent>
             <CreateLaboratoriosForm onAdd={addData}/>
           </DialogContent>
         </Dialog>
-        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-            Laboratorio Eliminado Correctamente!
-        </Alert>
-      </Snackbar>
       </div>
     );
 };

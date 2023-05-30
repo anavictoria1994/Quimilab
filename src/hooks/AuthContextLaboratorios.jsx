@@ -38,11 +38,11 @@ export function AuthProviderLaboratorios({children}) {
     const addData = async (fechaRegistro,nombreLaboratorio,coordinador,telefono,email) =>{
         try{
             const newDoc = {
-                Fecha:fechaRegistro,
-                NombreLaboratorio:nombreLaboratorio,
-                Coordinador:coordinador,
-                Telefono:telefono, 
-                Email:email,
+                fechaRegistro:fechaRegistro,
+                nombreLaboratorio:nombreLaboratorio,
+                coordinador:coordinador,
+                telefono:telefono, 
+                email:email,
             }
             const docRef = doc(collection(db, "laboratorios"));
             await setDoc(docRef, newDoc).then(doc => {
@@ -75,11 +75,11 @@ export function AuthProviderLaboratorios({children}) {
         try{
             const docRef = doc(db, "laboratorios", laboratoriosid);
             await updateDoc (docRef, {
-                Fecha:newFechaRegistro,
-                NombreLaboratorio:newNombreLaboratorio,
-                Coordinador:newCoordinador,
-                Telefono:newTelefono, 
-                Email: newEmail
+                fechaRegistro:newFechaRegistro,
+                nombreLaboratorio:newNombreLaboratorio,
+                coordinador:newCoordinador,
+                telefono:newTelefono, 
+                email: newEmail
             }).then(doc => {
                 console.log(doc)
                 getData()
