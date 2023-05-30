@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {  createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
 
@@ -10,9 +10,8 @@ export const useAuth = () =>{
 }
 const db = getFirestore(app);
 
-export function AuthProviderReactivos({children}) {
-
-    const [reactivos, setReactivos] = useState([]);
+export function AuthProviderLaboratorios({children}) {
+    const [laboratorios, setLaboratorios] = useState([]);
     const [error, setError] = useState();
     const [loading, setLoading] = useState({});
 
@@ -22,31 +21,30 @@ export function AuthProviderReactivos({children}) {
 
     const getData = async ()=>{
         try{
-            const querySnapshot = await getDocs(collection(db, "reactivos")); 
+            const querySnapshot = await getDocs(collection(db, "laboratorios")); 
             const dataDB = querySnapshot.docs.map(doc =>{
                 return{
                     id: doc.id, 
                     ...doc.data()
                 }
             })
-            setReactivos(dataDB)
+            setLaboratorios(dataDB)
         }catch (error){
             console.log(error);
             setError(error.message);
         }
     }
-    
-    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,HojaSe) =>{
+
+    const addData = async (fechaRegistro,nombreLaboratorio,coordinador,telefono,email) =>{
         try{
             const newDoc = {
-                Nombre:Nombre,
-                Sinonimo:Sinonimos,
-                NombreIngles:NombreIn,
-                Cas:Cas, 
-                EstadoFisico:EstadoFi,
-                HojaSeguridad: HojaSe
+                Fecha:fechaRegistro,
+                NombreLaboratorio:nombreLaboratorio,
+                Coordinador:coordinador,
+                Telefono:telefono, 
+                Email:email,
             }
-            const docRef = doc(collection(db, "reactivos"));
+            const docRef = doc(collection(db, "laboratorios"));
             await setDoc(docRef, newDoc).then(doc => {
                 console.log(doc)
                 getData()
@@ -56,14 +54,14 @@ export function AuthProviderReactivos({children}) {
             }
     }
 
-    const deleteData = async (reactivosid) =>{
+    const deleteData = async (laboratoriosid) =>{
         try{
             setLoading (prev =>({
                 ...prev, deleteData:true
             }));
-            const docRef = doc(db, "reactivos", reactivosid);
+            const docRef = doc(db, "laboratorios", laboratoriosid);
             await deleteDoc (docRef)
-            setReactivos(reactivos.filter(item =>  item.id !== reactivosid))
+            setLaboratorios(laboratorios.filter(item =>  item.id !== laboratoriosid))
             }catch(error){
                 setError(error.message);
             }finally{
@@ -73,16 +71,15 @@ export function AuthProviderReactivos({children}) {
             } 
     }
 
-    const updateData = async(reactivosid, nombreReactivo,SinonimosReactivo,NombreInReactivo,CasReactivo,EstadoFiReactivo,HojaSeReactivo )=>{
+    const updateData = async(laboratoriosid, newFechaRegistro,newNombreLaboratorio,newCoordinador,newTelefono,newEmail )=>{
         try{
-            const docRef = doc(db, "reactivos", reactivosid);
+            const docRef = doc(db, "laboratorios", laboratoriosid);
             await updateDoc (docRef, {
-                Nombre:nombreReactivo,
-                Sinonimo:SinonimosReactivo,
-                NombreIngles:NombreInReactivo,
-                Cas:CasReactivo, 
-                EstadoFisico:EstadoFiReactivo,
-                HojaSeguridad: HojaSeReactivo
+                Fecha:newFechaRegistro,
+                NombreLaboratorio:newNombreLaboratorio,
+                Coordinador:newCoordinador,
+                Telefono:newTelefono, 
+                Email: newEmail
             }).then(doc => {
                 console.log(doc)
                 getData()
@@ -92,11 +89,9 @@ export function AuthProviderReactivos({children}) {
             }
     }
 
-    
-    
     return(
         <authcontext.Provider value ={{
-        reactivos,
+        laboratorios,
         loading,
         error,
         addData,
@@ -107,4 +102,5 @@ export function AuthProviderReactivos({children}) {
             {children}
         </authcontext.Provider>
     ) 
+
 }
