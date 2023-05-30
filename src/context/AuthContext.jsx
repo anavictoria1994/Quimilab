@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
+         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import {doc, setDoc, getFirestore,getDoc} from "firebase/firestore";
 import {auth} from "../app/firebase";
 import {app} from "../app/firebase";
@@ -25,8 +25,8 @@ export function AuthProvider ({children}){
         const  infoUsuario = await createUserWithEmailAndPassword(auth, email, password).then((usurioFirebase)=>{
         return usurioFirebase;
         });
-        const docuRef = doc(firestore, `generadores/${infoUsuario.user.uid}`);
-        setDoc(docuRef,{nombre: Nombre, apellidos:Apellidos, tipoDocumento:tipoDocumento, numDocumento: NumDocumento, telefono: Telefono,email: email,cargo:Cargo,rol:Rol});
+        const docuRef = doc(firestore, `usuarios/${infoUsuario.user.uid}`);
+        setDoc(docuRef,{nombre: Nombre, apellidos:Apellidos, tipoDocumento:tipoDocumento, numDocumento: NumDocumento, telefono: Telefono,email: email, cargo:Cargo, rol:Rol});
     }
 
     const login =  async (email, password)=>{
@@ -42,25 +42,46 @@ export function AuthProvider ({children}){
         return signInWithPopup (auth,googleProvider)
     }
 
-    const getRol = async (uid) =>{
-        const docuRef = doc(firestore, `generadores/${uid}`);
+    const getUsuData = async (uid) =>{
+        const docuRef = doc(firestore, `usuarios/${uid}`);
         const docuCifrada = await getDoc(docuRef);
-        const infoFinal = docuCifrada.data().rol;
-       return infoFinal;
+        const usuarioData = docuCifrada.data();
+       return usuarioData;
     }
+    
+
+    const resetPassword =  async (email)=>{
+        return await sendPasswordResetEmail(auth, email);
+    }
+
+    const reauthenticateWithCredentiaL =  async (password)=>{
+        const resultado = {statusResponse: true, error: null}
+        const credential = EmailAuthProvider.credential(usere.email, password);
+        try{
+            await reauthenticateWithCredential(auth.currentUser,credential);
+        }catch(error){
+            resultado.statusResponse = false
+            resultado.error = error
+        }
+        return resultado;
+    }
+
+    const updatePasswordc =  async ( password)=>{
+        return await updatePassword(auth.currentUser,password);
+    }
+    
 
     useEffect(()=>{
         const unsubscribe = onAuthStateChanged(auth, (currentUser) =>{
             if (currentUser){
                 if (currentUser?.uid !== usere?.uid)
-                getRol(currentUser.uid).then((rol) => {
+                
+                getUsuData(currentUser.uid).then((usuData) => {
                     const usu = {
                         uid: currentUser.uid,
-                        email: currentUser.email,
-                        rol:rol,
+                        ...usuData
                     };
                     setUser(usu);
-                    console.log("ususrio final", usu); 
                 
                     switch (usu.rol){
                         case "Administrador":
@@ -72,11 +93,14 @@ export function AuthProvider ({children}){
                         case "Operador":
                             navigate("/Operador")
                             break
+                        case "Invitado":
+                                navigate("/Invitado")
+                                break
                         default:
+                            navigate("/Invitado")
                             break
                     };
-
-                    });
+                });
             }else{
                 setUser(null);
             }
@@ -88,7 +112,7 @@ export function AuthProvider ({children}){
 
     
     return(
-        <authcontext.Provider value ={{signup, login, usere, logout, loading, loginWithGoogle, getRol}}>
+        <authcontext.Provider value ={{signup, login, usere, logout, loading, loginWithGoogle, getUsuData, updatePasswordc, resetPassword, reauthenticateWithCredentiaL}}>
             {children}
         </authcontext.Provider>
     )

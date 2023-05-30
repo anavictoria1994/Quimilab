@@ -1,10 +1,15 @@
-import {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import { forwardRef, useState} from "react";
 import AppBar from '@mui/material/AppBar';
 import { useAuth } from "../context/AuthContext";
 import imgQuimilab from "../assets/img/quimilabimg.png"
-import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, } from "@mui/material"
+import CloseIcon from '@mui/icons-material/Close';
+import {Link, Grid, TextField, Modal, Button, Typography, Toolbar, Box, IconButton } from "@mui/material"
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 
 
@@ -15,7 +20,8 @@ const style = {
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '1px solid error.main',
+    borderRadius: '2%',
     boxShadow: 24,
     p: 4,
   };
@@ -24,17 +30,26 @@ const style = {
 const Navbar = () =>{
 
     const [open, setOpen] = useState(false);
+    const [openAler, setOpenAlert] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false); 
     
+   
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenAlert(false);
+    };
+    
+    const {login, loginWithGoogle} = useAuth();
+
+
     const [user, setUser] = useState({
         email:"",
         password:"",
     });
-
-    const {login, loginWithGoogle} = useAuth();
-    const navigate = useNavigate();
-    
 
     const [error,setError] = useState({
         error: false,
@@ -42,7 +57,6 @@ const Navbar = () =>{
         
     });
 
-    
     const handleChange = ({target: {name, value}}) =>{ 
         setUser({...user,[name]:value})
     };
@@ -55,7 +69,6 @@ const Navbar = () =>{
     const handleSubmitGoogle =  async(event) =>{
         try{
             await loginWithGoogle()
-            navigate("/Administrador")
             
         }catch(error){
             setError({
@@ -79,29 +92,45 @@ const Navbar = () =>{
             try{
                 
                 await login (user.email, user.password)
-                //navigate("/Administrador")
-                
-                
-   
+                setOpenAlert(true);
             }catch(error){
-                console.log({error})
-                setError({
-                    error: true,
-                    text:"rol no encontrado",
-                });
-                
+                if(error.code === "auth/wrong-password"){
+                    setError({
+                        error: true,
+                        text:"Contraseña Incorrecta",
+                    });
+                }
+                if(error.code === "auth/missing-password"){
+                    setError({
+                        error: true,
+                        text:"Por favor Ingresar la Contraseña",
+                    });
+                }
+                if(error.code === "auth/user-not-found"){
+                    setError({
+                        error: true,
+                        text:"Usuario no Registrado",
+                    });
+                }
+                if (error.code === "auth/weak-password"){
+                    setError({
+                        error: true,
+                        text:"La contraseña debe tener mas de 6 caracteres",
+                    });
+                }
+  
             }
-        } else{
+        } else  {
             setError({
                 error: true,
-                text:"Email o Contraseña incorrecto",
+                text:"Ingrese usurios y Contraseña",
             });
         } 
              
     }
 
     return(
-        
+        <>
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" sx={{bgcolor: "#FF0000"}}>
                 <Toolbar>
@@ -117,6 +146,9 @@ const Navbar = () =>{
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
+                            <IconButton    onClick={handleClose}>
+                                <CloseIcon />
+                            </IconButton>
                             <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
                                 Iniciar Sesion
                             </Typography>
@@ -125,15 +157,16 @@ const Navbar = () =>{
                             id="email"  error={error.error} helperText={error.text}  onChange={handleChange} 
                              />
 
-                            <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password"
+                            <TextField margin="normal" required fullWidth id="password" label="contraseña" name="password" 
                                 autoComplete="password" type="password" autoFocus   error={error.error} helperText={error.text} onChange={handleChange} />
 
                             <Button onClick={handleSubmit} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar</Button>
+                            
                             <Button onClick={handleSubmitGoogle} id = "googlelogin" type="button" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Ingresar con Google</Button>
                                 <Grid container>
                                     <Grid item xs>
                                     <Link href="/RecuperarCon" variant="body2" color="#FF0000">
-                                        Olvidó Contraseña?
+                                        Olvidó su Contraseña?
                                     </Link>
                                     </Grid>
                                     <Grid item>
@@ -148,7 +181,12 @@ const Navbar = () =>{
                 </Toolbar>
             </AppBar>
         </Box>
-        
+        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                                    Ingreso exitoso!
+            </Alert>
+        </Snackbar>
+    </>
     )
    
 }

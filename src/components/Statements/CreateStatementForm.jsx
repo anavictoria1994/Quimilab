@@ -16,32 +16,56 @@ import {
   Paper,
   Container,
   IconButton,
-  Divider
+  Divider,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import React, { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CreateWasteForm from "./CreateWasteForm";
+import { useAuthStatement } from "../../hooks/AuthContextStatements";
+import { useAuth } from "../../context/AuthContext";
 
 const CreateStatementForm = () => {
-  const [age, setAge] = useState("");
+  const { usere } = useAuth();
+  const { addStatements } = useAuthStatement();
   const [rowsWaste, setRowsWaste] = useState([
     {
       name: "Prueba 1",
       reactivo: "Reactivo 1",
     },
   ]);
-  const [value, setValue] = useState(dayjs());
+  const [fechaCreacion, setFechaCreacion] = useState(dayjs());
   const [openWaste, setOpenWaste] = useState(false);
-  
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const [openAler, setOpenAlert] = useState(false);
+  const [statement, setStatement] = useState({
+    generador: usere.nombre,
+    laboratorio: "",
+    fechaCreacion: fechaCreacion,
+    fechaRevision: "",
+    fechaRecepcion: "",
+    residuos: ["reactivo1", "reactivo2"],
+  });
+  const [error,setError] = useState({
+    error: false,
+    text:"",
+    
+  });
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+};
+  const handleChange = ({ target: { name, value } }) => {
+    setStatement({ ...statement, [name]: value });
   };
 
   const c = () => {
@@ -53,55 +77,112 @@ const CreateStatementForm = () => {
   };
 
   const handleChangeOpenWaste = () => {
-    setOpenWaste(!openWaste)
-  }
+    setOpenWaste(!openWaste);
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (statement.laboratorio == "") {
+      setError({
+        error: true,
+        text: "Debe llenar todos los campos",
+      });
+      return;
+    }
+    try {
+      await addStatements(statement);
+      setOpenAlert(true);
+      setStatement({
+        generador: usere.nombre,
+        laboratorio: "",
+        fechaCreacion: fechaCreacion,
+        fechaRevision: "",
+        fechaRecepcion: "",
+        residuos: ["reactivo1", "reactivo2"],
+      })
+      setError({
+        error: false,
+        text: "",
+      });
+    } catch (error) {
+      setError({
+        error: true,
+        text:"Problemas con el registro",
+      });
+    }
+  };
   return (
     <Container>
       <Grid container sx={{ p: 3 }} spacing={1}>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Laboratorio</InputLabel>
+          <TextField
+            name="generador"
+            label="Generador"
+            placeholder="Generador actual"
+            value={statement.generador}
+            onChange={handleChange}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ my: 2 }}>
+          <FormControl fullWidth required>
+            <InputLabel id="label-select-laboratorio" error={error.error} helperText={error.text}>Laboratorio</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={age}
+              labelId="label-select-laboratorio"
+              name="laboratorio"
               label="Laboratorio"
+              value={statement.laboratorio}
               onChange={handleChange}
+              error={error.error} 
+              helperText={error.text}
             >
-              <MenuItem value={10}>Lab 1</MenuItem>
-              <MenuItem value={20}>Lab 2</MenuItem>
+              <MenuItem value={"lab1"}>Lab 1</MenuItem>
+              <MenuItem value={"lab2"}>Lab 2</MenuItem>
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Generador" placeholder="Generador actual" />
-        </Grid>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-           <DatePicker
-                label="Fecha de creación"
-                value={value}
-                disabled
-                onChange={(newValue) => {setValue(newValue); alert(newValue)}}
-              />
+            <DatePicker
+              name="fechaCreacion"
+              label="Fecha de creación"
+              value={statement.fechaCreacion}
+              disabled
+              onChange={(newValue) => {
+                setFechaCreacion(newValue);
+                handleChange();
+                console.log(newValue);
+              }}
+            />
           </LocalizationProvider>
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Fecha de revisión" value="pendiente" disabled/>
+          <TextField
+            name="fechaRevision"
+            label="Fecha de revisión"
+            value={statement.fechaRevision}
+            disabled
+          />
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField label="Fecha de recepción" value="pendiente" disabled/>
+          <TextField
+            name="fechaRecepcion"
+            label="Fecha de recepción"
+            value={statement.fechaRecepcion}
+            disabled
+          />
         </Grid>
         <Grid item xs={12} md={12} sx={{ mt: 2 }}>
           <Typography variant="subtitle">Residuos</Typography>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 1 }}>
-          {!openWaste && <Button onClick={() => handleChangeOpenWaste()}>Añadir</Button>}
+          {!openWaste && (
+            <Button onClick={() => handleChangeOpenWaste()}>Añadir</Button>
+          )}
           {openWaste && <IconButton>y</IconButton>}
-        {openWaste && <IconButton>n</IconButton>}
+          {openWaste && <IconButton>n</IconButton>}
         </Grid>
-        {openWaste && <CreateWasteForm/>}
+        {openWaste && <CreateWasteForm />}
         <Grid item xs={12} md={12} sx={{ my: 1 }}>
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
@@ -127,20 +208,20 @@ const CreateStatementForm = () => {
                         size="small"
                         sx={{
                           bgcolor: "white",
-                          color: "#FF0000"
+                          color: "#FF0000",
                         }}
                         variant="contained"
                       >
-                        <DeleteIcon/>
+                        <DeleteIcon />
                       </IconButton>
                       <IconButton
                         size="small"
                         sx={{
-                          bgcolor: "white"
+                          bgcolor: "white",
                         }}
                         variant="contained"
                       >
-                        <EditIcon color="warning"/>
+                        <EditIcon color="warning" />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -149,9 +230,14 @@ const CreateStatementForm = () => {
             </Table>
           </TableContainer>
         </Grid>
-        <Divider sx={{width:"100%", mt:2, bgcolor:"black"}}/>
+        <Divider sx={{ width: "100%", mt: 2, bgcolor: "black" }} />
         <Grid item xs={12} md={6} sx={{ my: 3, textAlign: "center" }}>
-          <Button variant="contained" color="error" sx={{ width: "30%" }}>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ width: "30%" }}
+            onClick={handleSubmit}
+          >
             Crear
           </Button>
         </Grid>
@@ -161,6 +247,19 @@ const CreateStatementForm = () => {
           </Button>
         </Grid>
       </Grid>
+      <Snackbar
+        open={openAler}
+        autoHideDuration={4000}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Declaración Registrada Correctamente!
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

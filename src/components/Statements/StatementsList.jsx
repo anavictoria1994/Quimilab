@@ -22,8 +22,10 @@ import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import CreateStatementForm from "./CreateStatementForm";
 import { useState } from "react";
+import {useAuthStatement} from "../../hooks/AuthContextStatements" 
 
 const StatementsList = () => {
+    const {statements} = useAuthStatement();
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
     const [open, setOpen] = useState(false);
@@ -89,33 +91,16 @@ const StatementsList = () => {
         ),
       },
     ];
-    const rows = [
-      {
-        id: 1,
-        shippingDate: "02/07/2020",
-        stage: "Verificación",
-        place: "Lab. químico",
-        containersQuantity: 6,
-        waste: "bazufre",
-      },
-      {
-        id: 2,
-        shippingDate: "02/07/2020",
-        stage: "Verificación",
-        place: "Lab. químico",
-        containersQuantity: 6,
-        waste: "cazufre",
-      },
-      {
-        id: 3,
-        shippingDate: "02/07/2020",
-        stage: "Verificación",
-        place: "Lab. químico",
-        containersQuantity: 6,
-        waste: "azufre",
-      },
-    ];
-    
+    const rows = statements.map((item,index)=>{
+      return {
+        id: index,
+        shippingDate: new Date(item.fecha_creacion.seconds * 1000).toLocaleDateString("en-US"),
+        stage:item.etapa,
+        place:item.id_laboratorio,
+        containersQuantity:20,
+        waste:item.residuos,
+      }
+    })
     return (
       <Container sx={{ my: 3 }}>
         <Card elevation={5}>

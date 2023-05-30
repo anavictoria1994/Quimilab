@@ -31,6 +31,9 @@ import EditIcon from "@mui/icons-material/Edit";
 const CreateWasteForm = () => {
   const [state, setState] = useState("");
   const [recipient, setRecipient] = useState("");
+  const [recoverable, setRecoverable] = useState(null)
+  const [refrigeration, setRefrigeration] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleChangeState = (event) => {
     setState(event.target.value);
@@ -92,6 +95,45 @@ const CreateWasteForm = () => {
         </Grid>
         <Grid item xs={12} md={4} sx={{ my: 2 }}>
           <TextField label="Generador" placeholder="Generador actual" />
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ my: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Es recuperable?</InputLabel>
+            <Select
+              labelId="select-state-label"
+              id="select-state"
+              value={recoverable}
+              label="Laboratorio"
+              onChange={handleChangeState}
+            >
+              <MenuItem value={10}>Si</MenuItem>
+              <MenuItem value={20}>No</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ my: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Necesita refrigeración?</InputLabel>
+            <Select
+              labelId="select-state-label"
+              id="select-state"
+              value={refrigeration}
+              label="Laboratorio"
+              onChange={handleChangeState}
+            >
+              <MenuItem value={10}>Si</MenuItem>
+              <MenuItem value={20}>No</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ my: 2 }}>
+          <TextField
+            id="outlined-multiline-static"
+            label="Descripcion"
+            value={description}
+            multiline
+            rows={4}
+          />
         </Grid>
       </Grid>
     </Container>

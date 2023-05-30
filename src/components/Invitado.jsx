@@ -15,7 +15,7 @@ const style = {
     p: 4,
 };
 
-export function Administrador(){
+export function Invitado(){
        
     return (
         <Box sx={style}>
@@ -28,5 +28,5 @@ export function Administrador(){
 }
 
 export default function Dashboard() {
-    return <Administrador/>;
+    return <Invitado/>;
   }

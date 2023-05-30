@@ -3,17 +3,17 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+//import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
-import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+//import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ScienceIcon from '@mui/icons-material/Science';
-import PeopleIcon from '@mui/icons-material/People';
+//import ScienceIcon from '@mui/icons-material/Science';
+//import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const generador = {
@@ -35,10 +35,14 @@ const administrador = {
     icono: <DashboardIcon />
    },
 
+   "Reactivos": {
+    link: "/Reactivos",
+    icono: <ScienceOutlinedIcon/>
+   },
+
   // "Laboratorios": <ScienceIcon />,
   // "Generadores": <PeopleIcon />,
   // "Reportes": <BarChartIcon />,
-  // "Residuos": <LayersIcon />,
 }
 const operador = {
   "Seguimiento": {
@@ -48,8 +52,13 @@ const operador = {
     link: "/PerfilUsuario",
     icono: <DashboardIcon />
   },
-  
   // "Reportes": <BarChartIcon />,
+}
+const invitado = {
+  "Mi Perfil": {
+    link: "/PerfilUsuario",
+    icono: <DashboardIcon />
+   },
 }
 
 export const MainListItems = () => {
@@ -65,6 +74,10 @@ export const MainListItems = () => {
       break
     case "Operador":
       items = Object.entries(operador)
+      break
+    
+    case "Invitado":
+      items = Object.entries(invitado)
       break
     default:
       break
