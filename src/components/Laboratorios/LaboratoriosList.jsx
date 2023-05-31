@@ -21,6 +21,7 @@ import {
   Box,
   DialogContentText,
   DialogActions,
+  Tooltip,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -48,17 +49,17 @@ const style = {
 };
 
 const ActionsButtons = ({params, deleteData, updateData}) => {
-  const {laboratorios} = useAuth();
+
   const [openModal, setOpenModal] = useState(false);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
   const [newLaboratorio, setNewLaboratorio] = useState({
-    fechaRegistro: "",
-    nombreLaboratorio: "",
-    coordinador: "",
-    telefono: "",
-    email: "",
+    fechaRegistro: params.row.Fecha ,
+    nombreLaboratorio: params.row.NombreLab,
+    coordinador: params.row.Coord,
+    telefono: params.row.Tel,
+    email: params.row.Correo,
   });
   const [openAler, setOpenAlert] = useState(false);
   const [openDialogDelete, setOpenDialogDelete] = React.useState(false);
@@ -133,15 +134,15 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Laboratorio
                 </Typography>
-                <TextField margin="normal" required fullWidth value={laboratorios.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={laboratorios.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
+                <TextField margin="normal" required fullWidth value={newLaboratorio.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={laboratorios.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={laboratorios.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={laboratorios.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
+                <TextField margin="normal" required fullWidth value={newLaboratorio.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>             
@@ -238,18 +239,21 @@ const LaboratoriosList = () => {
           <CardContent>
             <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid item md={2} sx={{ flexGrow: 1 }}>
-                <IconButton
-                  size="small"
-                  sx={{
-                    bgcolor: "#FF0000",
-                    color: "white",
-                    mb: 2,
-                    "&:hover": { bgcolor: "#9d0000" },
-                  }}
-                  onClick={() => openDialogCreate()}
-                >
+                <Tooltip title="Agregar Laboratorio" arrow>
+                  <IconButton
+                    size="small"
+                    sx={{
+                      bgcolor: "#FF0000",
+                      color: "white",
+                      mb: 2,
+                      "&:hover": { bgcolor: "#9d0000" },
+                    }}
+                    onClick={() => openDialogCreate()}
+                  >
                   <AddIcon fontSize="large" />
                 </IconButton>
+              
+                </Tooltip>
               </Grid>
               <Grid item md={4}>
                 <Paper
@@ -263,13 +267,15 @@ const LaboratoriosList = () => {
                     value={search}
                     onChange={handleChange}
                   />
-                  <IconButton
-                    type="button"
-                    sx={{ p: "10px" }}
-                    aria-label="search"
-                  >
-                    <SearchIcon />
-                  </IconButton>
+                  <Tooltip title="Buscar Laboratorio" arrow>
+                    <IconButton
+                      type="button"
+                      sx={{ p: "10px" }}
+                      aria-label="search"
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Paper>
               </Grid>
             </Grid>
@@ -283,6 +289,7 @@ const LaboratoriosList = () => {
                 },
               }}
               rowsPerPageOptions={[5,10]}
+              checkboxSelection
               disableRowSelectionOnClick
               editMode={true}
             />

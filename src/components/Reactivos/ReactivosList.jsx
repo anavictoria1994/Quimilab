@@ -20,6 +20,7 @@ import {
   Modal,
   Typography,
   Box,
+  Tooltip,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -211,6 +212,7 @@ const ReactivosList = () => {
           <CardContent>
             <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid item md={2} sx={{ flexGrow: 1 }}>
+              <Tooltip title="Agregar Reactivo" arrow>
                 <IconButton
                   size="small"
                   sx={{
@@ -223,6 +225,7 @@ const ReactivosList = () => {
                 >
                   <AddIcon fontSize="large" />
                 </IconButton>
+                </Tooltip>
               </Grid>
               <Grid item md={4}>
                 <Paper
@@ -236,13 +239,15 @@ const ReactivosList = () => {
                     value={search}
                     onChange={handleChange}
                   />
-                  <IconButton
-                    type="button"
-                    sx={{ p: "10px" }}
-                    aria-label="search"
-                  >
-                    <SearchIcon />
-                  </IconButton>
+                  <Tooltip title="Buscar Reactivo" arrow>
+                    <IconButton
+                      type="button"
+                      sx={{ p: "10px" }}
+                      aria-label="search"
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Paper>
               </Grid>
             </Grid>
