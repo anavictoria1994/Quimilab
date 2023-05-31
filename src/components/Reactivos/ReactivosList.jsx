@@ -49,18 +49,18 @@ const style = {
 const ActionsButtons = ({params, deleteData, updateData}) => {
   
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenMOdal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const handleOpenModal = () => setOpenModal(true);
   const [newReactivo, setNewReactivo] = useState({
-    Nombre: "",
-    Sinonimos: "",
-    NombreIn: "",
-    Cas: "",
-    EstadoFi: "",
-    HojaSe: "",
+    Nombre: params.row.nameReactivo,
+    Sinonimos: params.row.sinonimoReactivo,
+    NombreIn: params.row.NamIngle,
+    Cas: params.row.casReactivo,
+    EstadoFi: params.row.estadoFisico,
+    HojaSe: params.row.hojaSeguridad,
   });
 
   const handleClick = (event) => {
@@ -109,7 +109,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleOpenMOdal}>Editar</MenuItem>
+        <MenuItem onClick={handleOpenModal}>Editar</MenuItem>
         <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
       </Menu>
       <div>
@@ -125,17 +125,17 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Reactivo
                 </Typography>
-                <TextField margin="normal" required fullWidth value={newReactivo.Nombre} defaultValue={params.row.nameReactivo} id="Nombre" label="Nombre" name="Nombre"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.nameReactivo} id= "Nombres" label="Nombre" name="Nombre"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={newReactivo.Sinonimos} defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.EstadoFi} defaultValue={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.NombreIn} defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.Cas} defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.HojaSe} defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>

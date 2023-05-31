@@ -54,11 +54,11 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
   const [newLaboratorio, setNewLaboratorio] = useState({
-    fechaRegistro: "",
-    nombreLaboratorio: "",
-    coordinador: "",
-    telefono: "",
-    email: "",
+    fechaRegistro: params.row.Fecha,
+    nombreLaboratorio: params.row.NombreLab,
+    coordinador: params.row.Coord,
+    telefono: params.row.Tel,
+    email: params.row.Correo,
   });
   const [openAler, setOpenAlert] = useState(false);
    
@@ -130,15 +130,15 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Laboratorio
                 </Typography>
-                <TextField margin="normal" required fullWidth value={newLaboratorio.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={newLaboratorio.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.Correo} id="email" label="Email" name="email"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
@@ -159,17 +159,11 @@ const LaboratoriosList = () => {
     const {laboratorios, deleteData, addData, updateData} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
-    const [search, setSearch] = useState("");
     const [searchLaboratorio, setSearchLaboratorio] = useState("");
 
     const handleChangeBusLab =(evento) =>{
       setSearchLaboratorio(evento.target.value)
     } 
-
-
-    const handleChange =(evento) =>{
-        setSearch(evento.target.value)
-    }
 
     const handleCloseAlert = (event, reason) => {
       if (reason === 'clickaway') {
