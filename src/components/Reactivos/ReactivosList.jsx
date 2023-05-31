@@ -62,6 +62,14 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     EstadoFi: params.row.estadoFisico,
     HojaSe: params.row.hojaSeguridad,
   });
+  const [openAler, setOpenAlert] = useState(false);
+   
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+      setOpenAlert(false);
+  }; 
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -81,7 +89,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   const handleClickEdit = async(reactivoid) => {
    
     await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
-    console.log("se edito correctamente")
+    setOpenAlert(true);
     setAnchorEl(null);
   };
   const handleClose = () => {
@@ -139,6 +147,11 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                              Reactivo Editado Correctamente!
+                  </Alert>
+                </Snackbar>
             </Box>
         </Modal>
       </div>
