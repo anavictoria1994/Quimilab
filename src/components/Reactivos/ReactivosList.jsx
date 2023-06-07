@@ -20,6 +20,7 @@ import {
   Modal,
   Typography,
   Box,
+  Link
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -46,21 +47,28 @@ const style = {
   p: 4,
 };
 
-const ActionsButtons = ({params, deleteData, updateData}) => {
-  
+const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataHojaseguridad}) => {
+  const [file, setFile] = useState({
+    filename:"",
+    filee:"",
+  });
+
   const [openModal, setOpenModal] = useState(false);
+  const [openModalHS, setOpenModalHS] = useState(false);
   const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModalHS = () => setOpenModalHS(false);
+  const handleOpenModalHS = () => setOpenModalHS(true);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
   const handleOpenModal = () => setOpenModal(true);
+
   const [newReactivo, setNewReactivo] = useState({
     Nombre: params.row.nameReactivo,
     Sinonimos: params.row.sinonimoReactivo,
     NombreIn: params.row.NamIngle,
     Cas: params.row.casReactivo,
     EstadoFi: params.row.estadoFisico,
-    HojaSe: params.row.hojaSeguridad,
     Cantidadr:params.row.cantidadReactivos,
   });
   const [openAler, setOpenAlert] = useState(false);
@@ -89,10 +97,18 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
 
   const handleClickEdit = async(reactivoid) => {
    
-    await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
+    await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.Cantidadr)
     setOpenAlert(true);
     setAnchorEl(null);
   };
+
+  const handleClickGuardar = async(reactivoid) => {
+    const result = await uploadFile(file.filee, file.filename)
+    await updateDataHojaseguridad(reactivoid, result)
+    setOpenAlert(true);
+    setAnchorEl(null);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -118,9 +134,34 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
           "aria-labelledby": "basic-button",
         }}
       >
+        <MenuItem onClick={handleOpenModalHS}>Guardar Hoja Seguridad</MenuItem>
         <MenuItem onClick={handleOpenModal}>Editar</MenuItem>
         <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
       </Menu>
+      <div>
+          <Modal
+          open={openModalHS}
+          onClose={handleCloseModalHS}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description">
+            <Box sx={style}>
+              <IconButton   onClick={handleCloseModalHS}>
+                <CloseIcon />
+                </IconButton>
+                <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
+                     Guardar Hoja de Seguridad
+                </Typography>
+                <input type="file" name="file" id="file" onChange={(e) => setFile({...file, filee: e.target.files[0], filename:e.target.files[0].name})}/>
+                <Button onClick={()=> handleClickGuardar(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >GUARDAR</Button>
+                <Button onClick={handleCloseModalHS} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                              Guardado Correctamente!
+                  </Alert>
+                </Snackbar>
+            </Box>
+        </Modal>
+      </div>
       <div>
           <Modal
           open={openModal}
@@ -144,8 +185,6 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                     autoFocus onChange={handleChange} />
                 <TextField margin="normal" required fullWidth  defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth  defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
-                    autoFocus onChange={handleChange} />
                 <TextField margin="normal" required fullWidth  defaultValue={params.row.cantidadReactivos} id="Cantidadr" label="Cantidad" name="Cantidadr"  
                     autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
@@ -164,7 +203,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   
 const ReactivosList = () => {
    
-    const {reactivos, deleteData, addData, updateData} = useAuth();
+    const {reactivos, deleteData, addData, updateData, uploadFile, updateDataHojaseguridad} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -188,19 +227,24 @@ const ReactivosList = () => {
     };
 
     const columns = [
-      { field: "id", headerName: "ID", width: 70 },
+      { field: "id", headerName: "ID", width: 40 },
       { field: "nameReactivo", headerName: "Nombre", width: 160, editable: true },
       { field: "sinonimoReactivo", headerName: "Sinonimos", width: 150, editable: true },
       { field: "estadoFisico", headerName: "Estado Fisico", width: 140, editable: true },
       { field: "NamIngle", headerName: "Nombre Ingles", width: 150, editable: true },
       { field: "casReactivo", headerName: "CAS", width: 150, editable: true },
-      { field: "hojaSeguridad", headerName: "Hoja Seguridad", width: 140, editable: true },
+      { field: "hojaSeguridad", 
+        headerName: "Hoja Seguridad", 
+        width: 200, 
+        
+        renderCell: (parametros) =>  <Link  href={parametros.row.hojaSeguridad}> {parametros.row.hojaSeguridad}</Link>,
+      },
       { field: "cantidadReactivos", headerName: "Cantidad", width: 140, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData}/>,
+        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData} uploadFile={uploadFile} updateDataHojaseguridad={updateDataHojaseguridad}/>,
       },
     ];
     
