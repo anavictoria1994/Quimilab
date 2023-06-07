@@ -61,6 +61,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     Cas: params.row.casReactivo,
     EstadoFi: params.row.estadoFisico,
     HojaSe: params.row.hojaSeguridad,
+    Cantidadr:params.row.cantidadReactivos,
   });
   const [openAler, setOpenAlert] = useState(false);
    
@@ -145,6 +146,8 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                     autoFocus onChange={handleChange} />
                 <TextField margin="normal" required fullWidth  defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
                     autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.cantidadReactivos} id="Cantidadr" label="Cantidad" name="Cantidadr"  
+                    autoFocus onChange={handleChange} />
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
                 <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
@@ -192,6 +195,7 @@ const ReactivosList = () => {
       { field: "NamIngle", headerName: "Nombre Ingles", width: 150, editable: true },
       { field: "casReactivo", headerName: "CAS", width: 150, editable: true },
       { field: "hojaSeguridad", headerName: "Hoja Seguridad", width: 140, editable: true },
+      { field: "cantidadReactivos", headerName: "Cantidad", width: 140, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
@@ -210,7 +214,8 @@ const ReactivosList = () => {
           hojaSeguridad: item.HojaSeguridad,
           casReactivo: item.Cas,
           NamIngle: item.NombreIngles,
-          actions: item.id,      
+          actions: item.id,
+          cantidadReactivos: item.CantidadR      
       }
     })
     

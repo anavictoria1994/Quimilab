@@ -98,6 +98,7 @@ export function AuthProvider ({children}){
                                 break
                         default:
                             navigate("/Invitado")
+                            console.log("usuario no registrado")
                             break
                     };
                 });

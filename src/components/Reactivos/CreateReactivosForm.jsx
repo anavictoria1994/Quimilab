@@ -7,18 +7,27 @@ import {
   Select,
   TextField,
   Container,
+  Typography
   
 } from "@mui/material";
-import React, { forwardRef,useState } from "react";
+import React, { forwardRef, useState } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useAuth } from "../../hooks/AuthContextReactivos";
+
 
 const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const CreateReactivosForm = ({onAdd}) => {
+  const {uploadFile} = useAuth();
   const [openAler, setOpenAlert] = useState(false);
+  const [file, setFile] = useState({
+    filename:"",
+    filee:"",
+  });
+  
 
   const handleCloseAlert = (event, reason) => {
       if (reason === 'clickaway') {
@@ -34,6 +43,7 @@ const CreateReactivosForm = ({onAdd}) => {
     Cas: "",
     EstadoFi: "",
     HojaSe: "",
+    Cantidad:"",
   });
   
   const [error,setError] = useState({
@@ -56,8 +66,8 @@ const CreateReactivosForm = ({onAdd}) => {
       return;  
     }
     try{
-      await onAdd(ingresarectivos.Nombre, ingresarectivos.Sinonimos, ingresarectivos.NombreIn, ingresarectivos.Cas, ingresarectivos.EstadoFi, ingresarectivos.HojaSe)
-      
+      await onAdd(ingresarectivos.Nombre, ingresarectivos.Sinonimos, ingresarectivos.NombreIn, ingresarectivos.Cas, ingresarectivos.EstadoFi, ingresarectivos.HojaSe, ingresarectivos.Cantidad)
+      await uploadFile(file.filee, file.filename)
       setOpenAlert(true);
       setReactivos({
         Nombre: "",
@@ -66,6 +76,7 @@ const CreateReactivosForm = ({onAdd}) => {
         Cas: "",
         EstadoFi: "",
         HojaSe: "",
+        Cantidad: "",
       });
     }catch(error){
       console.log(error.Code);
@@ -108,18 +119,13 @@ const CreateReactivosForm = ({onAdd}) => {
           </FormControl>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 2 }}>
-          <FormControl fullWidth required>
-            <InputLabel error={error.error} helperText={error.text} id="select-label" >Hoja de Seguridad</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="hojaSeguridad"
-              label="Hoja de Seguridad"
-              name="HojaSe"
-              onChange={handleChange}>
-                    <MenuItem value={"Si"}>Si</MenuItem>
-                    <MenuItem value={"No"}>No</MenuItem>
-            </Select>
-          </FormControl>
+          <TextField required value={ingresarectivos.Cantidad} error={error.error} helperText={error.text}fullWidth label="Cantidad" name="Cantidad" onChange={handleChange}/>
+        </Grid>
+        <Grid item xs={12} md={6} sx={{ my: 2 }}>
+        <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
+              Subir Hoja de Seguridad
+        </Typography>
+          <input type="file" name="file" id="file" onChange={(e) => setFile({...file, filee: e.target.files[0], filename:e.target.files[0].name})}/>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 3, textAlign:"center" }}>
           <Button onClick={handleSubmit} variant="contained"  sx={{width:"30%", bgcolor: "#FF0000"}}>Registrar</Button>

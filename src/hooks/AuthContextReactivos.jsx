@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
+import {storage} from "../app/firebase";
+import {ref, uploadBytes} from "firebase/storage"
 
 export const authcontext = createContext()
 
@@ -36,7 +38,7 @@ export function AuthProviderReactivos({children}) {
         }
     }
     
-    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,HojaSe) =>{
+    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,HojaSe, Cantidad) =>{
         try{
             const newDoc = {
                 Nombre:Nombre,
@@ -44,7 +46,8 @@ export function AuthProviderReactivos({children}) {
                 NombreIngles:NombreIn,
                 Cas:Cas, 
                 EstadoFisico:EstadoFi,
-                HojaSeguridad: HojaSe
+                HojaSeguridad: HojaSe,
+                CantidadR:Cantidad
             }
             const docRef = doc(collection(db, "reactivos"));
             await setDoc(docRef, newDoc).then(doc => {
@@ -91,6 +94,13 @@ export function AuthProviderReactivos({children}) {
                 setError(error.message);
             }
     }
+    
+    const uploadFile = async(file,name) =>{
+        const storageRef = ref(storage,`reactiactivos_hojaSeguridad/${name}`);
+        uploadBytes(storageRef,file).then(snapchot =>{
+            console.log(snapchot)
+        })
+    }
 
     
     
@@ -102,7 +112,8 @@ export function AuthProviderReactivos({children}) {
         addData,
         getData,
         deleteData,
-        updateData
+        updateData,
+        uploadFile
         }}>
             {children}
         </authcontext.Provider>
