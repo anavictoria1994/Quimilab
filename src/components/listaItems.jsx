@@ -8,9 +8,10 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 //import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ScienceIcon from '@mui/icons-material/Science';
 //import PeopleIcon from '@mui/icons-material/People';
+import BiotechIcon from '@mui/icons-material/Biotech';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import GroupIcon from '@mui/icons-material/Group';
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -40,11 +41,19 @@ const administrador = {
 
    "Laboratorios": {
     link: "/Laboratorios",
-    icono: <ScienceIcon/>
+    icono: <BiotechIcon/>
    },
 
-  // "Generadores": <PeopleIcon />,
-  // "Reportes": <BarChartIcon />,
+   "Usuarios": {
+    //link: "/Laboratorios",
+    icono: <GroupIcon/>
+   },
+
+   "Reportes": {
+    //link: "/Laboratorios",
+    icono: <BarChartIcon/>
+   },
+
 }
 const operador = {
   "Seguimiento": {
