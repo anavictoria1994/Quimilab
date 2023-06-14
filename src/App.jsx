@@ -10,6 +10,7 @@ import {Registro} from "./components/Registro";
 import {AuthProvider} from "./context/AuthContext";
 import {AuthProviderReactivos} from "./hooks/AuthContextReactivos";
 import {AuthProviderLaboratorios} from "./hooks/AuthContextLaboratorios";
+import {AuthProviderUsuarios} from "./hooks/AuthContextUsuarios";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ProtectedRouteHome } from "./components/ProtectedRouteHome";
 import { Seguimiento } from "./rutasComponents/Seguimiento";
@@ -17,6 +18,7 @@ import { PerfilUsuario } from "./rutasComponents/PerfilUsuario";
 import { RecuperarCon } from "./rutasComponents/RecuperarCon";
 import {Statements} from './components/Statements/Statements';
 import {Reactivos} from './components/Reactivos/Reactivos';
+import {Usuarios} from './components/Usuarios/Usuarios';
 import {Laboratorios} from './components/Laboratorios/Laboratorios';
 
 
@@ -27,6 +29,7 @@ function App() {
     <AuthProvider>
       <AuthProviderReactivos>
       <AuthProviderLaboratorios>
+      <AuthProviderUsuarios>
       <ContenedorPrincipal>
       <Routes>
         <Route path="/Registro" element ={<Registro/>} />
@@ -48,6 +51,13 @@ function App() {
             <Reactivos/>
           </ProtectedRoute>
         } />
+
+        <Route path="/Usuarios" element ={
+          <ProtectedRoute>
+            <Usuarios/>
+          </ProtectedRoute>
+        } />
+
 
         <Route path="/Laboratorios" element ={
           <ProtectedRoute>
@@ -88,6 +98,7 @@ function App() {
         </ProtectedRouteHome>} />
       </Routes>
       </ContenedorPrincipal>
+      </AuthProviderUsuarios>
       </AuthProviderLaboratorios>
       </AuthProviderReactivos>
     </AuthProvider>

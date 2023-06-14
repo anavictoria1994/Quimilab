@@ -81,7 +81,7 @@ export function Registro(){
         if(validateEmail(user.email)){
             setError({
             error: false,
-            text:"",
+            text:"El correo debe ser institucional",
             });
             try{
                 await signup(user.email, user.password, user.Nombre, user.Apellidos, user.tipoDocumento,user.NumDocumento, user.Telefono, user.cargo, user.Rol)
