@@ -2,10 +2,10 @@ import {  createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
 
-export const authcontext = createContext()
+export const AuthContextLaboratorios = createContext()
 
 export const useAuth = () =>{
-    const context = useContext(authcontext)
+    const context = useContext(AuthContextLaboratorios)
     return context;
 }
 const db = getFirestore(app);
@@ -90,7 +90,7 @@ export function AuthProviderLaboratorios({children}) {
     }
 
     return(
-        <authcontext.Provider value ={{
+        <AuthContextLaboratorios.Provider value ={{
         laboratorios,
         loading,
         error,
@@ -100,7 +100,7 @@ export function AuthProviderLaboratorios({children}) {
         updateData
         }}>
             {children}
-        </authcontext.Provider>
+        </AuthContextLaboratorios.Provider>
     ) 
 
 }

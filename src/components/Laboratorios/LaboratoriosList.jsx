@@ -35,6 +35,11 @@ const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+
+const sytles ={
+  color:"#dc3545",
+}
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -62,17 +67,28 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     email: params.row.Correo,
   });
   const [openAler, setOpenAlert] = useState(false);
-  const [openDialogDelete, setOpenDialogDelete] = React.useState(false);
+  const [openAlertDelete, setOpenAlertDelete] = useState(false);
+  const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  const [error,setError] = useState({});
 
   const handleOpenMOdal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
   const handleOpenDialogDelete = () => setOpenDialogDelete(true);
   const handleCloseDialogDelete = () => setOpenDialogDelete(false);
+  
+  
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
       setOpenAlert(false);
+  }; 
+
+  const handleCloseAlertDelete = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlertDelete(false);
   }; 
 
   const handleClick = (event) => {
@@ -83,19 +99,57 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     setNewLaboratorio({...newLaboratorio,[name]:value})
   };
 
+  const handleBlur = (e) =>{
+    handleChange(e);
+    setError(validate(newLaboratorio));
+  }
+
   const handleClickDelete = async(laboratorioid) => {
     await deleteData(laboratorioid);
-    setOpenAlert(true);
     setAnchorEl(null);
+    setOpenAlertDelete(true);
   };
 
   const handleClickEdit = async(laboratorioid) => {
-    await updateData(laboratorioid, newLaboratorio.fechaRegistro, newLaboratorio.nombreLaboratorio, newLaboratorio.coordinador, newLaboratorio.telefono,newLaboratorio.email)
-    setOpenAlert(true);
+    setError(validate(newLaboratorio));
+    if(Object.keys(error).length ===0){
+      await updateData(laboratorioid, newLaboratorio.fechaRegistro, newLaboratorio.nombreLaboratorio, newLaboratorio.coordinador, newLaboratorio.telefono,newLaboratorio.email)
+    }  
     setAnchorEl(null);
+    setOpenAlert(true);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const validate= (values)=> {
+    const errors = {}
+    const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+    const regexEmail = /^[A-Z0-9._%+-]+@[correounivalle]+\.[edu]+\.[co]/i;
+    
+    if(!values.fechaRegistro){
+      errors.fechaRegistro = "El campo fecha de registro es requerido"
+    } if(!values.nombreLaboratorio){
+      errors.nombreLaboratorio = "El campo nombre del laboratorio es requerido"
+    }else if(!regexName.test(values.nombreLaboratorio)){
+      errors.nombreLaboratorio = "El campo nombre de laboratorio sólo acepta letras y espacios en blanco"
+    }
+    if(!values.coordinador){
+      errors.coordinador = "El campo coordinador es requerido"
+    }else if(!regexName.test(values.coordinador)){
+      errors.coordinador = "El campo coordinador sólo acepta letras y espacios en blanco"
+    }if(!values.email){
+      errors.email = "El campo email es requerido"
+    }else if(!regexEmail.test(values.email)){
+      errors.email = "Este no es un formato válido para el campo email"
+    }if(!values.telefono){
+      errors.telefono = "El campo teléfono es requerido"
+    }else if(values.telefono.length < 7){
+      errors.telefono = "El campo teléfono debe tener más de 7 dígitos"
+    }else if(values.telefono.length > 10){
+      errors.telefono = "El campo teléfono no puede tener más de 10 digitos"
+    }
+    return errors;
   };
   
   return (
@@ -134,18 +188,25 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Laboratorio
                 </Typography>
-                <TextField margin="normal" required fullWidth value={newLaboratorio.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
+                <TextField type="date" onBlur={handleBlur} margin="normal" required fullWidth value={newLaboratorio.fechaRegistro} defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={newLaboratorio.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
+                {error.fechaRegistro && <p style={sytles}>{error.fechaRegistro}</p>}
+                <TextField onBlur={handleBlur} margin="normal" required fullWidth value={newLaboratorio.nombreLaboratorio} defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
+                {error.nombreLaboratorio && <p style={sytles }>{error.nombreLaboratorio}</p>}
+                <TextField onBlur={handleBlur} margin="normal" required fullWidth value={newLaboratorio.coordinador} defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
+                {error.coordinador && <p style={sytles}>{error.coordinador}</p>}
+                <TextField type="number" onBlur={handleBlur} margin="normal" required fullWidth value={newLaboratorio.telefono} defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newLaboratorio.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
+                {error.telefono && <p style={sytles}>{error.telefono}</p>}
+                <TextField onBlur={handleBlur} margin="normal" required fullWidth value={newLaboratorio.email} defaultValue={params.row.Correo} id="email" label="Email" name="email"  
                     autoFocus onChange={handleChange} />
-                <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
-                <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>             
+                {error.email && <p style={sytles}>{error.email}</p>}
+                <Button onClick={()=> handleClickEdit(value)} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000",  color: "white", 
+                      "&:hover": { bgcolor: "#9d0000" },}} >Editar</Button>
+                <Button onClick={handleCloseModal} type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000",  color: "white",
+                      "&:hover": { bgcolor: "#9d0000" },}} >Cancelar</Button>             
                 <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
                   <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%'}}>
                     Laboratorio Editado Correctamente!
@@ -174,14 +235,14 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
             <Button onClick={handleCloseDialogDelete} autoFocus>
               Cancelar
             </Button>
-            <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-            <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-              Laboratorio Eliminado Correctamente!
-            </Alert>
-          </Snackbar>
+            <Snackbar open={openAlertDelete} autoHideDuration={4000} onClose={handleCloseAlertDelete} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+              <Alert onClose={handleCloseAlertDelete} severity="success" sx={{ width: '100%'}}>
+                Laboratorio Eliminado Correctamente!
+              </Alert>
+            </Snackbar>
           </DialogActions>
-          
         </Dialog>
+        
         
       </div>
     </>
@@ -233,7 +294,7 @@ const LaboratoriosList = () => {
     })
     
     return (
-      <div>
+      <>
         <Card elevation={5}>
           <CardHeader title="Laboratorios" sx={{ textAlign: "center" }} />
           <CardContent>
@@ -289,12 +350,12 @@ const LaboratoriosList = () => {
                 },
               }}
               rowsPerPageOptions={[5,10]}
-              checkboxSelection
               disableRowSelectionOnClick
               editMode={true}
             />
           </CardContent>
         </Card>
+
         <Dialog open={open} onClose={() => handleClose()} PaperProps={{sx: {position:'relative', top:0, left:50, m:0, width:'30%', height:'100%'}}}>
         <Box>
         <IconButton  onClick={handleClose} >
@@ -306,9 +367,14 @@ const LaboratoriosList = () => {
           </DialogTitle>
           <DialogContent>
             <CreateLaboratoriosForm onAdd={addData}/>
+            <Grid item xs={12} sx={{ textAlign:"center" }}>
+              <Button variant="contained" onClick={handleClose}  sx={{width:"82%", bgcolor: "#FF0000", color: "white",
+                "&:hover": { bgcolor: "#9d0000" },}}>Cerrar</Button>
+            </Grid>      
           </DialogContent>
         </Dialog>
-      </div>
+       
+      </>
     );
 };
 

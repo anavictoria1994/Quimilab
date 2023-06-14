@@ -3,7 +3,6 @@ import {
     Grid,
     TextField,
     Container,
-    Box,
     
   } from "@mui/material";
   import React, { useState } from "react";
@@ -20,6 +19,14 @@ import {
   
   const CreateLaboratoriosForm = ({onAdd}) => {
     const [openAler, setOpenAlert] = useState(false);
+
+    const handleCloseAlert = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenAlert(false);
+    };  
+  
     const initialValues = {
       fechaRegistro: "",
       nombreLaboratorio: "",
@@ -44,8 +51,6 @@ import {
       if(Object.keys(error).length ===0){
         try{
           await onAdd(ingresarLaboratorios.fechaRegistro, ingresarLaboratorios.nombreLaboratorio, ingresarLaboratorios.coordinador, ingresarLaboratorios.telefono, ingresarLaboratorios.email)
-          setOpenAlert(true);
-
           setLaboratorios({
             fechaRegistro: "",
             nombreLaboratorio: "",
@@ -53,7 +58,7 @@ import {
             telefono: "",
             email: "",
           });
-
+          setOpenAlert(true);
         }catch(error){
           console.log(error.Code);
           setError({
@@ -61,7 +66,9 @@ import {
             text:"Problemas con el registro",
           });                
         }
-      }
+        return;
+      }  
+
     }
 
     const validate= (values)=> {
@@ -92,17 +99,11 @@ import {
         errors.telefono = "El campo teléfono no puede tener más de 10 digitos"
       }
       return errors;
+      
     };
 
     return (
-      <Box noValidate
-      component="form"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        m: 'auto',
-        width: 'fit-content',
-      }}>
+      
         <Container >
         <Grid container sx={{ p: 1 }} spacing={1}>
           <Grid item xs={12}>
@@ -118,7 +119,7 @@ import {
             {error.coordinador && <p style={sytles}>{error.coordinador}</p>}
           </Grid>
           <Grid item xs={12}>
-            <TextField required onBlur={handleBlur} value={ingresarLaboratorios.telefono} fullWidth label="Teléfono" name="telefono" onChange={handleChange}/>
+            <TextField type="number" required onBlur={handleBlur} value={ingresarLaboratorios.telefono} fullWidth label="Teléfono" name="telefono" onChange={handleChange}/>
             {error.telefono && <p style={sytles}>{error.telefono}</p>}
           </Grid>
           <Grid item xs={12}>
@@ -126,19 +127,17 @@ import {
             {error.email && <p style={sytles}>{error.email}</p>}
           </Grid>       
           <Grid item xs={12} sx={{ textAlign:"center" }}>
-            <Button type="submit" onClick={handleSubmit} variant="contained"  sx={{width:"100%", bgcolor: "#FF0000"}}>Registrar</Button>
-          </Grid>
-          <Grid item xs={12} sx={{ textAlign:"center" }}>
-            <Button variant="contained"  sx={{width:"100%", bgcolor: "#FF0000"}}>Cerrar</Button>
+            <Button type="submit" onClick={handleSubmit} variant="contained"  sx={{width:"100%", bgcolor: "#FF0000", color: "white",
+              "&:hover": { bgcolor: "#9d0000" },}}>Registrar</Button>
           </Grid>
         </Grid>
-        <Snackbar open={openAler} autoHideDuration={4000} onClose={()=>setOpenAlert(false)} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
-          <Alert severity="success" onClose={()=>setOpenAlert(false)} sx={{ width: '100%' }}>
+        <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+          <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
               Laboratorio Registrado Correctamente!
           </Alert>
         </Snackbar>
       </Container>
-      </Box>
+      
       
     );
   };
