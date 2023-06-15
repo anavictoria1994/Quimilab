@@ -22,6 +22,9 @@ import {
   Box,
   Link,
   DialogContentText,
+  FormControl,
+  InputLabel,
+  Select,
   DialogActions
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
@@ -159,10 +162,9 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
       errors.Cas = "El campo Cas solo acepta el formato xxx-xxx-xxx y no acepta letras "
     }if(!values.EstadoFi){
       errors.EstadoFi = "El campo estado fisico es requerido"
-    }if(!values.HojaSe){
-      errors.HojaSe = "El campo hoja de seguridad es requerido"
+    }if(!values.Cantidadr){
+      errors.Cantidadr = "El campo cantidad  es requerido"
     }
-
     return errors;
   };
 
@@ -234,9 +236,24 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
                 <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
                     autoFocus onChange={handleChange} />
                     {error.Sinonimos && <p style={sytles}>{error.Sinonimos}</p>}
-                <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
-                    autoFocus onChange={handleChange} />
-                    {error.EstadoFi && <p style={sytles}>{error.EstadoFi}</p>}
+                <Grid item xs={12} md={6} sx={{ my: 2 }}>
+                <FormControl fullWidth required onBlur={handleBlur} >
+                  <InputLabel error={error.error} helperText={error.text} id="select-label" >Estado Fisico</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="tipoDocumento"
+                    label="Estado Fisico"
+                    name="EstadoFi"
+                    defaultValue={params.row.estadoFisico}
+                    onChange={handleChange}>
+                      <MenuItem value={"Liquido"}>Liquido</MenuItem>
+                      <MenuItem value={"Solido"}>Solido</MenuItem>
+                      <MenuItem value={"Lodo"}>Lodo</MenuItem>
+                      <MenuItem value={"Gas"}>Gas</MenuItem>
+                  </Select>
+                </FormControl>
+                {error.EstadoFi && <p style={sytles}>{error.EstadoFi}</p>}
+                </Grid>
                 <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
                     autoFocus onChange={handleChange} />
                     {error.NombreIn && <p style={sytles}>{error.NombreIn}</p>}
