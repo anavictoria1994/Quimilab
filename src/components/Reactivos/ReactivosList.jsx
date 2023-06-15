@@ -436,6 +436,10 @@ const ReactivosList = () => {
           </DialogTitle>
           <DialogContent>
             <CreateReactivosForm onAdd={addData}/>
+            <Grid item xs={12} md={6} sx={{ my: 3, textAlign:"center" }}>
+              <Button variant="contained" onClick={handleClose}  sx={{width:"82%", bgcolor: "#FF0000", color: "white",
+                "&:hover": { bgcolor: "#9d0000" },}}>Cerrar</Button>
+            </Grid>
           </DialogContent>
         </Dialog>
         <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
