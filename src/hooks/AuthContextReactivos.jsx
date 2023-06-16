@@ -1,4 +1,4 @@
-import {  createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
 import {storage} from "../app/firebase";
@@ -38,7 +38,7 @@ export function AuthProviderReactivos({children}) {
         }
     }
     
-    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,cantidad) =>{
+    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,Cantidad) =>{
         try{
             const newDoc = {
                 Nombre:Nombre,
@@ -46,8 +46,7 @@ export function AuthProviderReactivos({children}) {
                 NombreIngles:NombreIn,
                 Cas:Cas, 
                 EstadoFisico:EstadoFi,
-                CantidadR: cantidad
-
+                CantidadR:Cantidad
             }
             const docRef = doc(collection(db, "reactivos"));
             await setDoc(docRef, newDoc).then(doc => {
@@ -57,6 +56,7 @@ export function AuthProviderReactivos({children}) {
             }catch(error){
                 setError(error.message);
             }
+
     }
 
     const deleteData = async (reactivosid) =>{
@@ -76,17 +76,16 @@ export function AuthProviderReactivos({children}) {
             } 
     }
 
-    const updateData = async(reactivosid, newNombre,newSinonimos,newNombreIn,newCas,newEstadoFi, cantidad )=>{
+    const updateData = async(reactivosid, nombreReactivo,SinonimosReactivo,NombreInReactivo,CasReactivo,EstadoFiReactivo, cantidadRectivo )=>{
         try{
             const docRef = doc(db, "reactivos", reactivosid);
             await updateDoc (docRef, {
-                Nombre:newNombre,
-                Sinonimo:newSinonimos,
-                NombreIngles:newNombreIn,
-                Cas:newCas, 
-                EstadoFisico:newEstadoFi,
-                CantidadR: cantidad
-
+                Nombre:nombreReactivo,
+                Sinonimo:SinonimosReactivo,
+                NombreIngles:NombreInReactivo,
+                Cas:CasReactivo, 
+                EstadoFisico:EstadoFiReactivo,
+                CantidadR:cantidadRectivo
             }).then(doc => {
                 console.log(doc)
                 getData()
@@ -95,10 +94,8 @@ export function AuthProviderReactivos({children}) {
                 setError(error.message);
             }
     }
-
     
     const uploadFile = async(file, name) =>{
-
         try{
             const storageRef = ref(storage,`reactiactivos_hojaSeguridad/${name}`);
             await uploadBytes(storageRef,file)
@@ -123,6 +120,7 @@ export function AuthProviderReactivos({children}) {
                 setError(error.message);
             }
     }
+
     
     return(
         <authcontext.Provider value ={{

@@ -1,5 +1,5 @@
 import React from "react";
-import { forwardRef,useState } from "react";
+import { forwardRef, useState } from "react";
 import { useAuth } from "../../hooks/AuthContextReactivos";
 import {
   Card,
@@ -115,6 +115,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
     await deleteData(reactivoid)
     setAnchorEl(null);
     setOpenAlertDelete(true);
+    
   };
 
   const handleClickEdit = async(reactivoid) => {
@@ -140,7 +141,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
   const validate= (values)=> {
     const errors = {}
     const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
-    const regexCas = /^\d{3}-\d{3}-\d{3}$/;
+    const regexCas = /^\d{3}-\d{2}-\d{1}$/;
     if(!values.Nombre){
       errors.Nombre = "El campo nombre es requerido"
     }else if(!regexName.test(values.Nombre)){
@@ -159,8 +160,8 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
       errors.Cas = "El campo Cas solo acepta el formato xxx-xxx-xxx y no acepta letras "
     }if(!values.EstadoFi){
       errors.EstadoFi = "El campo estado fisico es requerido"
-    }if(!values.HojaSe){
-      errors.HojaSe = "El campo hoja de seguridad es requerido"
+    }if(!values.Cantidadr){
+      errors.Cantidadr = "El campo Cntidad es requerido"
     }
 
     return errors;
@@ -207,7 +208,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
                 <input type="file" name="file" id="file" onChange={(e) => setFile({...file, filee: e.target.files[0], filename:e.target.files[0].name})}/>
                 <Button onClick={()=> handleClickGuardar(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >GUARDAR</Button>
                 <Button onClick={handleCloseModalHS} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
-                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert}  anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
                   <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
                               Guardado Correctamente!
                   </Alert>
@@ -273,9 +274,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
           </DialogContent>
           <DialogActions>
             <Button onClick={()=> handleClickDelete(value)}>Eliminar</Button>
-            <Button onClick={handleCloseDialogDelete} autoFocus>
-              Cancelar
-            </Button>
+            <Button onClick={handleCloseDialogDelete} autoFocus> Cancelar </Button>
             <Snackbar open={openAlertDelete} autoHideDuration={4000} onClose={handleCloseAlertDelete} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
               <Alert onClose={handleCloseAlertDelete} severity="success" sx={{ width: '100%'}}>
                 Reactivo Eliminado Correctamente!

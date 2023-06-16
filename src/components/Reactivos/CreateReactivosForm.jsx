@@ -38,7 +38,6 @@ const CreateReactivosForm = ({onAdd}) => {
     NombreIn: "",
     Cas: "",
     EstadoFi: "",
-    HojaSe: "",
     Cantidad:"",
   });
   
@@ -63,7 +62,7 @@ const CreateReactivosForm = ({onAdd}) => {
     setError(validate(ingresarectivos));
     if(Object.keys(error).length ===0){
     try{
-      await onAdd(ingresarectivos.Nombre, ingresarectivos.Sinonimos, ingresarectivos.NombreIn, ingresarectivos.Cas, ingresarectivos.EstadoFi, ingresarectivos.HojaSe, ingresarectivos.Cantidad)
+      await onAdd(ingresarectivos.Nombre, ingresarectivos.Sinonimos, ingresarectivos.NombreIn, ingresarectivos.Cas, ingresarectivos.EstadoFi, ingresarectivos.Cantidad)
       setOpenAlert(true);
       setReactivos({
         Nombre: "",
@@ -71,7 +70,6 @@ const CreateReactivosForm = ({onAdd}) => {
         NombreIn: "",
         Cas: "",
         EstadoFi: "",
-        HojaSe: "",
         Cantidad: "",
       });
     }catch(error){
@@ -88,7 +86,7 @@ const CreateReactivosForm = ({onAdd}) => {
   const validate= (values)=> {
     const errors = {}
     const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
-    const regexCas = /^\d{3}-\d{3}-\d{3}$/;
+    const regexCas = /^\d{3}-\d{2}-\d{1}$/;
     if(!values.Nombre){
       errors.Nombre = "El campo nombre es requerido"
     }else if(!regexName.test(values.Nombre)){
@@ -107,8 +105,8 @@ const CreateReactivosForm = ({onAdd}) => {
       errors.Cas = "El campo Cas solo acepta el formato xxx-xxx-xxx y no acepta letras "
     }if(!values.EstadoFi){
       errors.EstadoFi = "El campo estado fisico es requerido"
-    }if(!values.HojaSe){
-      errors.HojaSe = "El campo hoja de seguridad es requerido"
+    }if(!values.Cantidad){
+      errors.Cantidad = "El campo Cantidad es requerido"
     }
 
     return errors;

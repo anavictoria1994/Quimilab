@@ -45,7 +45,7 @@ const administrador = {
    },
 
    "Usuarios": {
-    link: "/Usuarios",
+    //link: "/Laboratorios",
     icono: <GroupIcon/>
    },
 
