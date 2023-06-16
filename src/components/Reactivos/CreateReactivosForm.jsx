@@ -153,10 +153,8 @@ const CreateReactivosForm = ({onAdd}) => {
           {error.Cantidad && <p style={sytles}>{error.Cantidad}</p>}
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 3, textAlign:"center" }}>
-          <Button onClick={handleSubmit} variant="contained"  sx={{width:"30%", bgcolor: "#FF0000"}}>Registrar</Button>
-        </Grid>
-        <Grid item xs={12} md={6} sx={{ my: 3, textAlign:"center" }}>
-          <Button variant="contained"  sx={{width:"30%", bgcolor: "#FF0000"}}>Cerrar</Button>
+          <Button onClick={handleSubmit} variant="contained"  sx={{width:"82%", bgcolor: "#FF0000", color: "white",
+                "&:hover": { bgcolor: "#9d0000" },}}>Registrar</Button>
         </Grid>
       </Grid>
       <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
