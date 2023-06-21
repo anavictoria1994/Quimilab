@@ -56,9 +56,8 @@ const style = {
   p: 4,
 };
 
-const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataHojaseguridad}) => {
+const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataHojaseguridad, deleteFile}) => {
   const [file, setFile] = useState({
-    filename:"",
     filee:"",
   });
 
@@ -116,6 +115,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
 
   const handleClickDelete = async(reactivoid) => {
     await deleteData(reactivoid)
+    await deleteFile(reactivoid)
     setAnchorEl(null);
     setOpenAlertDelete(true);
     
@@ -131,7 +131,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
   };
 
   const handleClickGuardar = async(reactivoid) => {
-    const result = await uploadFile(file.filee, file.filename)
+    const result = await uploadFile(file.filee, reactivoid)
     await updateDataHojaseguridad(reactivoid, result)
     setOpenAlert(true);
     setAnchorEl(null);
@@ -207,7 +207,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Guardar Hoja de Seguridad
                 </Typography>
-                <input type="file" name="file" id="file" onChange={(e) => setFile({...file, filee: e.target.files[0], filename:e.target.files[0].name})}/>
+                <input type="file" name="file" id="file" onChange={(e) => setFile({...file, filee: e.target.files[0]})}/>
                 <Button onClick={()=> handleClickGuardar(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >GUARDAR</Button>
                 <Button onClick={handleCloseModalHS} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
                 <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert}  anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
@@ -306,7 +306,7 @@ const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataH
   
 const ReactivosList = () => {
    
-    const {reactivos, deleteData, addData, updateData, uploadFile, updateDataHojaseguridad} = useAuth();
+    const {reactivos, deleteData, addData, updateData, uploadFile, updateDataHojaseguridad, deleteFile} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -347,7 +347,7 @@ const ReactivosList = () => {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData} uploadFile={uploadFile} updateDataHojaseguridad={updateDataHojaseguridad}/>,
+        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData} uploadFile={uploadFile} updateDataHojaseguridad={updateDataHojaseguridad} deleteFile={deleteFile}/>,
       },
     ];
     

@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
 import {storage} from "../app/firebase";
-import {getDownloadURL, ref, uploadBytes} from "firebase/storage"
+import {getDownloadURL, ref, uploadBytes, deleteObject} from "firebase/storage"
 
 export const authcontext = createContext()
 
@@ -76,6 +76,8 @@ export function AuthProviderReactivos({children}) {
             } 
     }
 
+
+
     const updateData = async(reactivosid, nombreReactivo,SinonimosReactivo,NombreInReactivo,CasReactivo,EstadoFiReactivo, cantidadRectivo )=>{
         try{
             const docRef = doc(db, "reactivos", reactivosid);
@@ -104,7 +106,6 @@ export function AuthProviderReactivos({children}) {
             }catch(error){
                 setError(error.message);
             }
-
     }
 
     const updateDataHojaseguridad = async(reactivosid, hojaSe )=>{
@@ -112,6 +113,7 @@ export function AuthProviderReactivos({children}) {
             const docRef = doc(db, "reactivos", reactivosid);
             await updateDoc (docRef, {
                 HojaSeguridad: hojaSe
+
             }).then(doc => {
                 console.log(doc)
                 getData()
@@ -121,6 +123,14 @@ export function AuthProviderReactivos({children}) {
             }
     }
 
+    const deleteFile = async(name)=>{
+        const desertRef = ref(storage, `reactiactivos_hojaSeguridad/${name}`);
+        await deleteObject(desertRef).then(() => {
+            console.log("archivo eliminado")
+        }).catch((error) => {
+            setError(error.message);
+        });
+    }
     
     return(
         <authcontext.Provider value ={{
@@ -132,8 +142,8 @@ export function AuthProviderReactivos({children}) {
         deleteData,
         updateData,
         uploadFile,
-        updateDataHojaseguridad
-
+        updateDataHojaseguridad,
+        deleteFile
         }}>
             {children}
         </authcontext.Provider>
