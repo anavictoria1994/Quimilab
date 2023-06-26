@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import {getFirestore, collection, getDocs, deleteDoc, doc, setDoc, updateDoc} from "firebase/firestore";
 import {app} from "../app/firebase";
+import {storage} from "../app/firebase";
+import {getDownloadURL, ref, uploadBytes, deleteObject} from "firebase/storage"
 
 export const authcontext = createContext()
 
@@ -36,7 +38,7 @@ export function AuthProviderReactivos({children}) {
         }
     }
     
-    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,HojaSe) =>{
+    const addData = async (Nombre,Sinonimos,NombreIn,Cas,EstadoFi,Cantidad) =>{
         try{
             const newDoc = {
                 Nombre:Nombre,
@@ -44,7 +46,7 @@ export function AuthProviderReactivos({children}) {
                 NombreIngles:NombreIn,
                 Cas:Cas, 
                 EstadoFisico:EstadoFi,
-                HojaSeguridad: HojaSe
+                CantidadR:Cantidad
             }
             const docRef = doc(collection(db, "reactivos"));
             await setDoc(docRef, newDoc).then(doc => {
@@ -54,6 +56,7 @@ export function AuthProviderReactivos({children}) {
             }catch(error){
                 setError(error.message);
             }
+
     }
 
     const deleteData = async (reactivosid) =>{
@@ -73,7 +76,9 @@ export function AuthProviderReactivos({children}) {
             } 
     }
 
-    const updateData = async(reactivosid, nombreReactivo,SinonimosReactivo,NombreInReactivo,CasReactivo,EstadoFiReactivo,HojaSeReactivo )=>{
+
+
+    const updateData = async(reactivosid, nombreReactivo,SinonimosReactivo,NombreInReactivo,CasReactivo,EstadoFiReactivo, cantidadRectivo )=>{
         try{
             const docRef = doc(db, "reactivos", reactivosid);
             await updateDoc (docRef, {
@@ -82,7 +87,33 @@ export function AuthProviderReactivos({children}) {
                 NombreIngles:NombreInReactivo,
                 Cas:CasReactivo, 
                 EstadoFisico:EstadoFiReactivo,
-                HojaSeguridad: HojaSeReactivo
+                CantidadR:cantidadRectivo
+            }).then(doc => {
+                console.log(doc)
+                getData()
+            })
+            }catch(error){
+                setError(error.message);
+            }
+    }
+    
+    const uploadFile = async(file, name) =>{
+        try{
+            const storageRef = ref(storage,`reactiactivos_hojaSeguridad/${name}`);
+            await uploadBytes(storageRef,file)
+            const url = await getDownloadURL(storageRef)
+            return url
+            }catch(error){
+                setError(error.message);
+            }
+    }
+
+    const updateDataHojaseguridad = async(reactivosid, hojaSe )=>{
+        try{
+            const docRef = doc(db, "reactivos", reactivosid);
+            await updateDoc (docRef, {
+                HojaSeguridad: hojaSe
+
             }).then(doc => {
                 console.log(doc)
                 getData()
@@ -92,7 +123,14 @@ export function AuthProviderReactivos({children}) {
             }
     }
 
-    
+    const deleteFile = async(name)=>{
+        const desertRef = ref(storage, `reactiactivos_hojaSeguridad/${name}`);
+        await deleteObject(desertRef).then(() => {
+            console.log("archivo eliminado")
+        }).catch((error) => {
+            setError(error.message);
+        });
+    }
     
     return(
         <authcontext.Provider value ={{
@@ -102,7 +140,10 @@ export function AuthProviderReactivos({children}) {
         addData,
         getData,
         deleteData,
-        updateData
+        updateData,
+        uploadFile,
+        updateDataHojaseguridad,
+        deleteFile
         }}>
             {children}
         </authcontext.Provider>

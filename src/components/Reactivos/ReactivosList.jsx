@@ -1,5 +1,5 @@
 import React from "react";
-import { forwardRef,useState } from "react";
+import { forwardRef, useState } from "react";
 import { useAuth } from "../../hooks/AuthContextReactivos";
 import {
   Card,
@@ -20,6 +20,12 @@ import {
   Modal,
   Typography,
   Box,
+  Link,
+  DialogContentText,
+  FormControl,
+  InputLabel,
+  Select,
+  DialogActions
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,6 +38,10 @@ import MuiAlert from '@mui/material/Alert';
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+const sytles ={
+  color:"#dc3545",
+}
 
 const style = {
   position: 'absolute',
@@ -46,22 +56,49 @@ const style = {
   p: 4,
 };
 
-const ActionsButtons = ({params, deleteData, updateData}) => {
-  
+const ActionsButtons = ({params, deleteData, updateData, uploadFile, updateDataHojaseguridad, deleteFile}) => {
+  const [file, setFile] = useState({
+    filee:"",
+  });
+
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenMOdal = () => setOpenModal(true);
+  const [openModalHS, setOpenModalHS] = useState(false);
   const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModalHS = () => setOpenModalHS(false);
+  const handleOpenModalHS = () => setOpenModalHS(true);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const handleOpenModal = () => setOpenModal(true);
+  const [openAlertDelete, setOpenAlertDelete] = useState(false);
+  const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  const [error,setError] = useState({});
+  const handleOpenDialogDelete = () => setOpenDialogDelete(true);
+  const handleCloseDialogDelete = () => setOpenDialogDelete(false);
+
   const [newReactivo, setNewReactivo] = useState({
-    Nombre: "",
-    Sinonimos: "",
-    NombreIn: "",
-    Cas: "",
-    EstadoFi: "",
-    HojaSe: "",
+    Nombre: params.row.nameReactivo,
+    Sinonimos: params.row.sinonimoReactivo,
+    NombreIn: params.row.NamIngle,
+    Cas: params.row.casReactivo,
+    EstadoFi: params.row.estadoFisico,
+    Cantidadr:params.row.cantidadReactivos,
   });
+  const [openAler, setOpenAlert] = useState(false);
+
+  const handleCloseAlertDelete = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlertDelete(false);
+  }; 
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+      setOpenAlert(false);
+  }; 
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,23 +108,67 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
     setNewReactivo({...newReactivo,[name]:value})
   };
 
+  const handleBlur = (e) =>{
+    handleChange(e);
+    setError(validate(newReactivo));
+  }
+
   const handleClickDelete = async(reactivoid) => {
-    if(window.confirm("Esta seguro de querer Eliminar este reactivo?")){
-      await deleteData(reactivoid)
-    }
+    await deleteData(reactivoid)
+    await deleteFile(reactivoid)
     setAnchorEl(null);
+    setOpenAlertDelete(true);
+    
   };
 
   const handleClickEdit = async(reactivoid) => {
-   
-    await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.HojaSe)
-    console.log("se edito correctamente")
+    setError(validate(newReactivo));
+    if(Object.keys(error).length ===0){
+    await updateData(reactivoid, newReactivo.Nombre, newReactivo.Sinonimos, newReactivo.NombreIn, newReactivo.Cas,newReactivo.EstadoFi, newReactivo.Cantidadr)
+    }
+    setAnchorEl(null);
+    setOpenAlert(true);
+  };
+
+  const handleClickGuardar = async(reactivoid) => {
+    const result = await uploadFile(file.filee, reactivoid)
+    await updateDataHojaseguridad(reactivoid, result)
+    setOpenAlert(true);
     setAnchorEl(null);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
+  const validate= (values)=> {
+    const errors = {}
+    const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+    const regexCas = /^\d{3}-\d{2}-\d{1}$/;
+    if(!values.Nombre){
+      errors.Nombre = "El campo nombre es requerido"
+    }else if(!regexName.test(values.Nombre)){
+      errors.Nombre = "El campo nombre sólo acepta letras y espacios en blanco"
+    }if(!values.Sinonimos){
+      errors.Sinonimos = "El campo sinónimos es requerido"
+    }else if(!regexName.test(values.Sinonimos)){
+      errors.Sinonimos = "El campo sinónimos sólo acepta letras y espacios en blanco"
+    }if(!values.NombreIn){
+      errors.NombreIn = "El campo nombre en inglés es requerido"
+    }else if(!regexName.test(values.NombreIn)){
+      errors.NombreIn = "El campo nombre en inglés sólo acepta letras y espacios en blanco"
+    }if(!values.Cas){
+      errors.Cas = "El campo número CAS es requerido"
+    }else if(!regexCas.test(values.Cas)){
+      errors.Cas = "El campo Cas solo acepta el formato xxx-xxx-xxx y no acepta letras "
+    }if(!values.EstadoFi){
+      errors.EstadoFi = "El campo estado fisico es requerido"
+    }if(!values.Cantidadr){
+      errors.Cantidadr = "El campo cantidad es requerido"
+    }
+    return errors;
+  };
+
   return (
     <>
       <Button
@@ -109,9 +190,34 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleOpenMOdal}>Editar</MenuItem>
-        <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
+        <MenuItem onClick={handleOpenModalHS}>Guardar Hoja Seguridad</MenuItem>
+        <MenuItem onClick={handleOpenModal}>Editar</MenuItem>
+        <MenuItem onClick={handleOpenDialogDelete}>Eliminar</MenuItem>
       </Menu>
+      <div>
+          <Modal
+          open={openModalHS}
+          onClose={handleCloseModalHS}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description">
+            <Box sx={style}>
+              <IconButton   onClick={handleCloseModalHS}>
+                <CloseIcon />
+                </IconButton>
+                <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
+                     Guardar Hoja de Seguridad
+                </Typography>
+                <input type="file" name="file" id="file" onChange={(e) => setFile({...file, filee: e.target.files[0]})}/>
+                <Button onClick={()=> handleClickGuardar(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >GUARDAR</Button>
+                <Button onClick={handleCloseModalHS} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert}  anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                              Guardado Correctamente!
+                  </Alert>
+                </Snackbar>
+            </Box>
+        </Modal>
+      </div>
       <div>
           <Modal
           open={openModal}
@@ -125,22 +231,74 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
                      Editar Reactivo
                 </Typography>
-                <TextField margin="normal" required fullWidth value={newReactivo.Nombre} defaultValue={params.row.nameReactivo} id="Nombre" label="Nombre" name="Nombre"  
+                <TextField margin="normal" required fullWidth  onBlur={handleBlur} defaultValue={params.row.nameReactivo} id= "Nombres" label="Nombre" name="Nombre"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth value={newReactivo.Sinonimos} defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
+                    {error.Nombre && <p style={sytles}>{error.Nombre}</p>}
+                <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.sinonimoReactivo} id="Sinonimos" label="Sinonimos" name="Sinonimos" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.EstadoFi} defaultValue={params.row.estadoFisico} id="EstadoFi" label="Estado Fisico" name="EstadoFi"  
+                    {error.Sinonimos && <p style={sytles}>{error.Sinonimos}</p>}
+                <Grid item xs={12} md={6} sx={{ my: 2 }}>
+                <FormControl fullWidth required onBlur={handleBlur} >
+                  <InputLabel error={error.error} helperText={error.text} id="select-label" >Estado Fisico</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="tipoDocumento"
+                    label="Estado Fisico"
+                    name="EstadoFi"
+                    defaultValue={params.row.estadoFisico}
+                    onChange={handleChange}>
+                      <MenuItem value={"Liquido"}>Liquido</MenuItem>
+                      <MenuItem value={"Solido"}>Solido</MenuItem>
+                      <MenuItem value={"Lodo"}>Lodo</MenuItem>
+                      <MenuItem value={"Gas"}>Gas</MenuItem>
+                  </Select>
+                </FormControl>
+                {error.EstadoFi && <p style={sytles}>{error.EstadoFi}</p>}
+                </Grid>
+                <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.NombreIn} defaultValue={params.row.NamIngle} id="NombreIn" label="Nombre Ingles" name="NombreIn"  
+                    {error.NombreIn && <p style={sytles}>{error.NombreIn}</p>}
+                <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.Cas} defaultValue={params.row.casReactivo} id="Cas" label="cas" name="Cas"  
+                    {error.Cas && <p style={sytles}>{error.Cas}</p>}
+                <TextField margin="normal" required fullWidth onBlur={handleBlur} defaultValue={params.row.cantidadReactivos} id="Cantidadr" label="Cantidad" name="Cantidadr"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth value={newReactivo.HojaSe} defaultValue={params.row.hojaSeguridad} id="HojaSe" label="Hoja de seguridad" name="HojaSe"  
-                    autoFocus onChange={handleChange} />
+                    {error.Cantidadr && <p style={sytles}>{error.Cantidadr}</p>}
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
+                <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+                  <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                              Reactivo Editado Correctamente!
+                  </Alert>
+                </Snackbar>
             </Box>
         </Modal>
+      </div>
+      <div>
+      <Dialog
+          open={openDialogDelete}
+          onClose={handleCloseDialogDelete}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"¿Estás seguro?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Este Reactivo se elimarará definitivamente 
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={()=> handleClickDelete(value)}>Eliminar</Button>
+            <Button onClick={handleCloseDialogDelete} autoFocus> Cancelar </Button>
+            <Snackbar open={openAlertDelete} autoHideDuration={4000} onClose={handleCloseAlertDelete} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
+              <Alert onClose={handleCloseAlertDelete} severity="success" sx={{ width: '100%'}}>
+                Reactivo Eliminado Correctamente!
+              </Alert>
+            </Snackbar>
+          </DialogActions>
+        </Dialog>
       </div>
     </>
   )
@@ -148,7 +306,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   
 const ReactivosList = () => {
    
-    const {reactivos, deleteData, addData, updateData} = useAuth();
+    const {reactivos, deleteData, addData, updateData, uploadFile, updateDataHojaseguridad, deleteFile} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -172,18 +330,24 @@ const ReactivosList = () => {
     };
 
     const columns = [
-      { field: "id", headerName: "ID", width: 70 },
+      { field: "id", headerName: "ID", width: 40 },
       { field: "nameReactivo", headerName: "Nombre", width: 160, editable: true },
       { field: "sinonimoReactivo", headerName: "Sinonimos", width: 150, editable: true },
       { field: "estadoFisico", headerName: "Estado Fisico", width: 140, editable: true },
       { field: "NamIngle", headerName: "Nombre Ingles", width: 150, editable: true },
       { field: "casReactivo", headerName: "CAS", width: 150, editable: true },
-      { field: "hojaSeguridad", headerName: "Hoja Seguridad", width: 140, editable: true },
+      { field: "hojaSeguridad", 
+        headerName: "Hoja Seguridad", 
+        width: 200, 
+        
+        renderCell: (parametros) =>  <Link  href={parametros.row.hojaSeguridad}> {parametros.row.hojaSeguridad}</Link>,
+      },
+      { field: "cantidadReactivos", headerName: "Cantidad", width: 140, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData}/>,
+        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData} uploadFile={uploadFile} updateDataHojaseguridad={updateDataHojaseguridad} deleteFile={deleteFile}/>,
       },
     ];
     
@@ -197,7 +361,8 @@ const ReactivosList = () => {
           hojaSeguridad: item.HojaSeguridad,
           casReactivo: item.Cas,
           NamIngle: item.NombreIngles,
-          actions: item.id,      
+          actions: item.id,
+          cantidadReactivos: item.CantidadR      
       }
     })
     
@@ -270,6 +435,10 @@ const ReactivosList = () => {
           </DialogTitle>
           <DialogContent>
             <CreateReactivosForm onAdd={addData}/>
+            <Grid item xs={12} md={6} sx={{ my: 3, textAlign:"center" }}>
+              <Button variant="contained" onClick={handleClose}  sx={{width:"82%", bgcolor: "#FF0000", color: "white",
+                "&:hover": { bgcolor: "#9d0000" },}}>Cerrar</Button>
+            </Grid>
           </DialogContent>
         </Dialog>
         <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>

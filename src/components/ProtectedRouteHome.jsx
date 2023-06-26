@@ -14,6 +14,8 @@ export function ProtectedRouteHome ({children}){
             return <Navigate to={"/Generador"} />
         case "Operador":
             return <Navigate to={"/Operador"} />
+        case "Invitado":
+            return <Navigate to={"/Invitado"} />
         default:
             return<>{children}</>
     };

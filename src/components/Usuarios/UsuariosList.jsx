@@ -1,10 +1,11 @@
 import React from "react";
 import { forwardRef,useState } from "react";
-import { useAuth } from "../../hooks/AuthContextLaboratorios";
+import { useAuth } from "../../hooks/AuthContextUsuarios";
 import {
   Card,
   CardContent,
   CardHeader,
+  Container,
   Button,
   IconButton,
   Grid,
@@ -18,12 +19,15 @@ import {
   TextField, 
   Modal,
   Typography,
-  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  Box
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import CreateLaboratoriosForm from "./CreateLaboratoriosForm";
+import CreateUsuariosForm from "./CreateUsuariosForm";
 import CloseIcon from '@mui/icons-material/Close';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -46,19 +50,23 @@ const style = {
 };
 
 const ActionsButtons = ({params, deleteData, updateData}) => {
-  
+ 
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenMOdal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
   const {value} = params
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
-  const [newLaboratorio, setNewLaboratorio] = useState({
-    fechaRegistro: params.row.Fecha,
-    nombreLaboratorio: params.row.NombreLab,
-    coordinador: params.row.Coord,
-    telefono: params.row.Tel,
-    email: params.row.Correo,
+  const handleOpenModal = () => setOpenModal(true);
+
+  const [newUsuario, setNewUsurio] = useState({
+    nombreUsu: params.row.nombreUsuario,
+    apellidosUsu: params.row.apellidoUsuario,
+    tipoDocumentousu: params.row.tipoDocumento,
+    docuentoUsu: params.row.documentoUsurio,
+    telefonoUsu: params.row.telefonoUsuario,
+    emailUsu: params.row.correoUsurio,
+    cargoUsu:params.row.cargoUsurio,
+    rolUsu:params.row.rolUsuario,
   });
   const [openAler, setOpenAlert] = useState(false);
    
@@ -74,21 +82,28 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   };
   
   const handleChange = ({target: {name, value}}) =>{ 
-    setNewLaboratorio({...newLaboratorio,[name]:value})
+    setNewUsurio({...newUsuario,[name]:value})
   };
 
-  const handleClickDelete = async(laboratorioid) => {
-    if(window.confirm("Esta seguro de querer Eliminar este reactivo?")){
-      await deleteData(laboratorioid)
+  const handleClickDelete = async(usurioid) => {
+    if(window.confirm("Esta seguro de querer Eliminar este Usuario?")){
+      await deleteData(usurioid)
     }
     setAnchorEl(null);
   };
 
-  const handleClickEdit = async(laboratorioid) => {
-    await updateData(laboratorioid, newLaboratorio.fechaRegistro, newLaboratorio.nombreLaboratorio, newLaboratorio.coordinador, newLaboratorio.telefono,newLaboratorio.email)
+  const handleClickEdit = async(usurioid) => {
+   try {
+    await updateData(usurioid, newUsuario.nombreUsu, newUsuario.apellidosUsu, newUsuario.tipoDocumentousu ,newUsuario.docuentoUsu, newUsuario.telefonoUsu,newUsuario.emailUsu, newUsuario.cargoUsu, newUsuario.rolUsu)
     setOpenAlert(true);
     setAnchorEl(null);
+   } catch (error) {
+    console.log(error.Code);
+    console.log("problemas con la edicion")
+   }
+   
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -114,7 +129,7 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleOpenMOdal}>Editar</MenuItem>
+        <MenuItem onClick={handleOpenModal}>Editar</MenuItem>
         <MenuItem onClick={()=> handleClickDelete(value)}>Eliminar</MenuItem>
       </Menu>
       <div>
@@ -128,23 +143,46 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
                 <CloseIcon />
                 </IconButton>
                 <Typography id="modal-modal-title" variant="h6" component="h2" align="center" xs={12} sm={6}>
-                     Editar Laboratorio
+                     Editar Usuario
                 </Typography>
-                <TextField margin="normal" required fullWidth  defaultValue={params.row.Fecha} id="fechaRegistro" label="Fecha de registro" name="fechaRegistro"  
+                <Grid item xs={12} md={6} sx={{ my: 2 }}>
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.nombreUsuario} id= "Nombres" label="Nombre" name="nombreUsu"  
                     autoFocus onChange={handleChange}/>
-                <TextField margin="normal" required fullWidth  defaultValue={params.row.NombreLab} id="nombreLaboratorio" label="Nombre de laboratorio" name="nombreLaboratorio" 
+                </Grid>
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.apellidoUsuario} id="apellidos" label="Apellidos" name="apellidosUsu" 
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth  defaultValue={params.row.Coord} id="coordinador" label="Coordinador" name="coordinador"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.tipoDocumento} id="tipoDocumentousu" label="Tipo Documento" name="tipoDocumentousu"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth  defaultValue={params.row.Tel} id="telefono" label="Teléfono" name="telefono"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.documentoUsurio} id="documento" label="Documento" name="docuentoUsu"  
                     autoFocus onChange={handleChange} />
-                <TextField margin="normal" required fullWidth  defaultValue={params.row.Correo} id="email" label="Email" name="email"  
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.telefonoUsuario} id="telefonoUsu" label="Telefono" name="telefonoUsu"  
                     autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.correoUsurio} id="emailUsu" label="Email" name="emailUsu"  
+                    autoFocus onChange={handleChange} />
+                <TextField margin="normal" required fullWidth  defaultValue={params.row.cargoUsurio} id="cargoUsu" label="Cantidad" name="cargoUsu"  
+                    autoFocus onChange={handleChange} />
+                <Grid item xs={12} md={6} sx={{ my: 2 }}>
+                <FormControl fullWidth required>
+                  <InputLabel  id="select-label" >Rol</InputLabel>
+                  <Select
+                  labelId="demo-simple-select-label"
+                  id="rolUsu"
+                  label="Rol"
+                  name="rolUsu"
+                  defaultValue={params.row.rolUsuario}
+                  onChange={handleChange}>
+                    <MenuItem value={"Administrador"}>Administrador</MenuItem>
+                    <MenuItem value={"Operador"}>Operador</MenuItem>
+                    <MenuItem value={"Invitado"}>Invitado</MenuItem>
+                    <MenuItem value={"Generador"}>Generador</MenuItem>
+                  </Select>
+                </FormControl>
+                </Grid>
                 <Button onClick={()=> handleClickEdit(value)} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Editar</Button>
                 <Button onClick={handleCloseModal} type="submit" color="inherit" fullWidth variant="contained" sx={{ mt: 2, mb: 1, bgcolor: "#FF0000"}} >Cancelar</Button>
                 <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
                   <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-                              Laboratorio Editado Correctamente!
+                              Usuario Editado Correctamente!
                   </Alert>
                 </Snackbar>
             </Box>
@@ -154,16 +192,16 @@ const ActionsButtons = ({params, deleteData, updateData}) => {
   )
 }
   
-const LaboratoriosList = () => {
+const UsuariosList = () => {
    
-    const {laboratorios, deleteData, addData, updateData} = useAuth();
+    const {usuarioRegistrados, deleteData, registro, updateData} = useAuth();
     const [openAler, setOpenAlert] = useState(false);
     const [open, setOpen] = useState(false);
-    const [searchLaboratorio, setSearchLaboratorio] = useState("");
+    const [search, setSearch] = useState("");
 
-    const handleChangeBusLab =(evento) =>{
-      setSearchLaboratorio(evento.target.value)
-    } 
+    const handleChange =(evento) =>{
+      setSearch(evento.target.value)
+    }
 
     const handleCloseAlert = (event, reason) => {
       if (reason === 'clickaway') {
@@ -180,38 +218,44 @@ const LaboratoriosList = () => {
     };
 
     const columns = [
-      { field: "id", headerName: "ID", width: 70 },
-      { field: "Fecha", headerName: "Fecha de registro", width: 160, editable: true },
-      { field: "NombreLab", headerName: "Nombre del laboratorio", width: 150, editable: true },
-      { field: "Coord", headerName: "Coordinador", width: 140, editable: true },
-      { field: "Tel", headerName: "Teléfono", width: 150, editable: true },
-      { field: "Correo", headerName: "Email", width: 150, editable: true },
+      { field: "id", headerName: "ID", width: 40 },
+      { field: "nombreUsuario", headerName: "Nombre", width: 160, editable: true },
+      { field: "apellidoUsuario", headerName: "Apellido", width: 150, editable: true },
+      { field: "tipoDocumento", headerName: "Tipo Docu", width: 150, editable: true },
+      { field: "documentoUsurio", headerName: "Documento", width: 150, editable: true },
+      { field: "telefonoUsuario", headerName: "Telefono", width: 150, editable: true },
+      { field: "correoUsurio", headerName: "Correo", width: 150, editable: true },
+      { field: "cargoUsurio", headerName: "Cargo", width: 150, editable: true },
+      { field: "rolUsuario", headerName: "Rol", width: 150, editable: true },
       {
         field: "actions",
         headerName: "Acciones",
         width: 150,
-        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData}/>,
+        renderCell: (parametros) => <ActionsButtons  params={parametros} deleteData={deleteData} updateData={updateData} />,
       },
     ];
     
-    const rows =  laboratorios.filter(dato=>dato.nombreLaboratorio.toLowerCase().includes(searchLaboratorio)).map((item, indice) => {
+    const rows =  usuarioRegistrados.filter(dato=>dato.nombre.toLowerCase().includes(search)).map((item, indice) => {
       
       return {
           id: indice,
-          Fecha: item.fechaRegistro,
-          NombreLab: item.nombreLaboratorio,
-          Coord: item.coordinador,
-          Tel: item.telefono,
-          Correo: item.email,
-          actions: item.id,      
+          nombreUsuario: item.nombre,
+          apellidoUsuario: item.apellidos,
+          documentoUsurio: item.numDocumento,
+          tipoDocumento: item.tipoDocumento,
+          telefonoUsuario: item.telefono,
+          correoUsurio: item.email,
+          cargoUsurio: item.cargo,
+          actions: item.id,
+          rolUsuario: item.rol      
       }
     })
     
     
     return (
-      <div>
+      <Container sx={{ my: 3 }}>
         <Card elevation={5}>
-          <CardHeader title="Laboratorios" sx={{ textAlign: "center" }} />
+          <CardHeader title="Usuarios" sx={{ textAlign: "center" }} />
           <CardContent>
             <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid item md={2} sx={{ flexGrow: 1 }}>
@@ -235,10 +279,10 @@ const LaboratoriosList = () => {
                 >
                   <InputBase
                     sx={{ ml: 1, flex: 1 }}
-                    placeholder="Buscar Laboratorio"
+                    placeholder="Buscar Usuario"
                     inputProps={{ "aria-label": "search google maps" }}
-                    value={searchLaboratorio}
-                    onChange={handleChangeBusLab}
+                    value={search}
+                    onChange={handleChange}
                   />
                   <IconButton
                     type="button"
@@ -272,19 +316,19 @@ const LaboratoriosList = () => {
         </IconButton>
         </Box>
           <DialogTitle sx={{ textAlign: "center" }}>
-            Registro de Laboratorios
+            Registro de Usuario
           </DialogTitle>
           <DialogContent>
-            <CreateLaboratoriosForm onAdd={addData}/>
+            <CreateUsuariosForm onAdd={registro}/>
           </DialogContent>
         </Dialog>
         <Snackbar open={openAler} autoHideDuration={4000} onClose={handleCloseAlert} anchorOrigin={{vertical:'bottom', horizontal:'right'}}>
         <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-            Laboratorio Eliminado Correctamente!
+                      Usuario Eliminado Correctamente!
         </Alert>
       </Snackbar>
-      </div>
+      </Container>
     );
 };
 
-export default LaboratoriosList;
+export default UsuariosList;
