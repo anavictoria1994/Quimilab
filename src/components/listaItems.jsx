@@ -8,13 +8,12 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 //import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-//import ScienceIcon from '@mui/icons-material/Science';
+import ScienceIcon from '@mui/icons-material/Science';
 //import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
 
 const generador = {
   "Mi Perfil": {
@@ -40,7 +39,11 @@ const administrador = {
     icono: <ScienceOutlinedIcon/>
    },
 
-  // "Laboratorios": <ScienceIcon />,
+   "Laboratorios": {
+    link: "/Laboratorios",
+    icono: <ScienceIcon/>
+   },
+
   // "Generadores": <PeopleIcon />,
   // "Reportes": <BarChartIcon />,
 }

@@ -43,16 +43,39 @@ const CreateStatementForm = () => {
     },
   ]);
   const [fechaCreacion, setFechaCreacion] = useState(dayjs());
-  const [openWaste, setOpenWaste] = useState(false);
+  const [openWaste, setOpenWaste] = useState({
+    state: false,
+    action: "crear",
+    title: "Nuevo residuo"
+  });
   const [openAler, setOpenAlert] = useState(false);
+  const [buttonState,setButtonState] = useState(false)
   const [statement, setStatement] = useState({
-    generador: usere.nombre,
+    idGenerador: usere.uid,
+    nombreGenerador: usere.nombre +" "+ usere.apellidos,
+    emailGenerador: usere.email,
+    cargoGenerador: usere.cargo,
     laboratorio: "",
     fechaCreacion: fechaCreacion,
     fechaRevision: "",
     fechaRecepcion: "",
-    residuos: ["reactivo1", "reactivo2"],
+    residuos: [{nombre: "mezcla", corriente: "tóxico"}],
   });
+  const [wasteToUpdate, setWasteToUpdate] = useState({
+    object: {
+      nombre: "",
+      corriente: "",
+      reactivos: [],
+      cantidadGenerada: "",
+      unidades: "",
+      tipoEmbalaje: "",
+      descripcion: "",
+      estadoFQ: "",
+      inflamable: false,
+    },
+    index: ""
+  })
+  const [waste, setWaste] = useState([]);
   const [error,setError] = useState({
     error: false,
     text:"",
@@ -68,21 +91,30 @@ const CreateStatementForm = () => {
     setStatement({ ...statement, [name]: value });
   };
 
-  const c = () => {
-    const n = {
-      name: "Prueba 1",
-      reactivo: "Reactivo 1",
-    };
-    setRowsWaste([...rowsWaste, n]);
+  const addWaste = (w) => {
+    let newArray = [...statement.residuos]
+    newArray.push(w)
+    setStatement({...statement, residuos: newArray})
+    console.log(waste)
+    handleChangeOpenWaste("")
   };
 
-  const handleChangeOpenWaste = () => {
-    setOpenWaste(!openWaste);
+  const updateWaste = (w, index) => {
+    statement.residuos[index] = w
+    setStatement({...statement, residuos: statement.residuos})
+  }
+
+  const handleChangeOpenWaste = (action) => {
+    setOpenWaste({
+      state: !openWaste.state,
+      action: action,
+      title: action === "crear"? "Nuevo residuo":"Editar residuo"
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (statement.laboratorio == "") {
+    if (statement.laboratorio == "" && waste.length == 0 ) {
       setError({
         error: true,
         text: "Debe llenar todos los campos",
@@ -93,12 +125,15 @@ const CreateStatementForm = () => {
       await addStatements(statement);
       setOpenAlert(true);
       setStatement({
-        generador: usere.nombre,
+        idGenerador: usere.uid,
+        nombreGenerador: usere.nombre +" "+ usere.apellidos,
+        emailGenerador: usere.email,
+        cargoGenerador: usere.cargo,
         laboratorio: "",
         fechaCreacion: fechaCreacion,
         fechaRevision: "",
         fechaRecepcion: "",
-        residuos: ["reactivo1", "reactivo2"],
+        residuos: [],
       })
       setError({
         error: false,
@@ -111,20 +146,42 @@ const CreateStatementForm = () => {
       });
     }
   };
+  
   return (
     <Container>
       <Grid container sx={{ p: 3 }} spacing={1}>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField
-            name="generador"
-            label="Generador"
-            placeholder="Generador actual"
-            value={statement.generador}
-            onChange={handleChange}
-            disabled
-          />
+      <Grid item xs={12} md={4} sx={{ my: 2 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              name="fechaCreacion"
+              label="Fecha de creación"
+              value={statement.fechaCreacion}
+              disabled
+              onChange={(newValue) => {
+                setFechaCreacion(newValue);
+                handleChange();
+                console.log(newValue);
+              }}
+            />
+          </LocalizationProvider>
         </Grid>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
+        <Grid item xs={12} md={12}>
+        <Typography variant="subtitle1" sx={{fontWeight:"bold"}}>Información del generador</Typography>
+        </Grid>
+        <Divider sx={{ width: "100%", mt: 2, bgcolor: "black" }} />
+        <Grid item xs={12} md={6} sx={{ my: 2 }}>
+        <Typography variant="subtitle1" sx={{ mb: 1,fontWeight:"bold" }}>Responsable</Typography>
+        <Typography variant="body1">{statement.nombreGenerador}</Typography>
+        </Grid>
+        <Grid item xs={12} md={6} sx={{ my: 2 }}>
+        <Typography variant="subtitle1" sx={{ mb: 1, fontWeight:"bold" }}>Correo</Typography>
+        <Typography variant="body1">{statement.emailGenerador}</Typography>
+        </Grid>
+        <Grid item xs={12} md={6} sx={{ my: 2 }}>
+        <Typography variant="subtitle1" sx={{ mb: 1, fontWeight:"bold" }}>Cargo</Typography>
+        <Typography variant="body1">{statement.cargoGenerador}</Typography>
+        </Grid>
+        <Grid item xs={12} md={6} sx={{ my: 2 }}>
           <FormControl fullWidth required>
             <InputLabel id="label-select-laboratorio" error={error.error} helperText={error.text}>Laboratorio</InputLabel>
             <Select
@@ -141,68 +198,36 @@ const CreateStatementForm = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              name="fechaCreacion"
-              label="Fecha de creación"
-              value={statement.fechaCreacion}
-              disabled
-              onChange={(newValue) => {
-                setFechaCreacion(newValue);
-                handleChange();
-                console.log(newValue);
-              }}
-            />
-          </LocalizationProvider>
-        </Grid>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField
-            name="fechaRevision"
-            label="Fecha de revisión"
-            value={statement.fechaRevision}
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} md={4} sx={{ my: 2 }}>
-          <TextField
-            name="fechaRecepcion"
-            label="Fecha de recepción"
-            value={statement.fechaRecepcion}
-            disabled
-          />
-        </Grid>
+        <Divider sx={{ width: "100%", mt: 2, bgcolor: "black" }} />
         <Grid item xs={12} md={12} sx={{ mt: 2 }}>
-          <Typography variant="subtitle">Residuos</Typography>
+          <Typography variant="subtitle1" sx={{fontWeight:"bold"}}>{openWaste.state? openWaste.title:"Residuos"}</Typography>
         </Grid>
         <Grid item xs={12} md={6} sx={{ my: 1 }}>
-          {!openWaste && (
-            <Button onClick={() => handleChangeOpenWaste()}>Añadir</Button>
+          {!openWaste.state && (
+            <Button variant="contained" color="error" onClick={() => handleChangeOpenWaste("crear")}>Añadir</Button>
           )}
-          {openWaste && <IconButton>y</IconButton>}
-          {openWaste && <IconButton>n</IconButton>}
         </Grid>
-        {openWaste && <CreateWasteForm />}
-        <Grid item xs={12} md={12} sx={{ my: 1 }}>
+        {openWaste.state && <CreateWasteForm stateForm={handleChangeOpenWaste} addWaste={addWaste} updateWaste={updateWaste} action={openWaste.action} wasteToUpdate={wasteToUpdate} setWasteToUpdate={setWasteToUpdate}/>}
+        {!openWaste.state && (<Grid item xs={12} md={12} sx={{ my: 1 }}>
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Prueba</TableCell>
-                  <TableCell>Reactivos</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Corriente</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowsWaste.map((row) => (
+                {statement.residuos.map((item, index) => (
                   <TableRow
-                    key={row.name}
+                    key={item.nombre}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.name}
+                      {item.nombre}
                     </TableCell>
-                    <TableCell>{row.reactivo}</TableCell>
+                    <TableCell>{item.corriente}</TableCell>
                     <TableCell>
                       <IconButton
                         size="small"
@@ -220,6 +245,7 @@ const CreateStatementForm = () => {
                           bgcolor: "white",
                         }}
                         variant="contained"
+                        onClick={() => { setWasteToUpdate({object: item, index: index}); handleChangeOpenWaste("editar")}}
                       >
                         <EditIcon color="warning" />
                       </IconButton>
@@ -229,7 +255,7 @@ const CreateStatementForm = () => {
               </TableBody>
             </Table>
           </TableContainer>
-        </Grid>
+        </Grid>)}
         <Divider sx={{ width: "100%", mt: 2, bgcolor: "black" }} />
         <Grid item xs={12} md={6} sx={{ my: 3, textAlign: "center" }}>
           <Button

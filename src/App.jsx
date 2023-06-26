@@ -9,6 +9,7 @@ import {Operador} from "./components/Operador";
 import {Registro} from "./components/Registro";
 import {AuthProvider} from "./context/AuthContext";
 import {AuthProviderReactivos} from "./hooks/AuthContextReactivos";
+import {AuthProviderLaboratorios} from "./hooks/AuthContextLaboratorios";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ProtectedRouteHome } from "./components/ProtectedRouteHome";
 import { Seguimiento } from "./rutasComponents/Seguimiento";
@@ -17,6 +18,8 @@ import { RecuperarCon } from "./rutasComponents/RecuperarCon";
 import {Statements} from './components/Statements/Statements';
 import {Reactivos} from './components/Reactivos/Reactivos';
 import { AuthProviderDeclaraciones } from "./hooks/AuthContextStatements";
+import {Laboratorios} from './components/Laboratorios/Laboratorios';
+
 
 
 function App() {
@@ -24,6 +27,7 @@ function App() {
   return (
     <AuthProvider>
       <AuthProviderReactivos>
+      <AuthProviderLaboratorios>
       <AuthProviderDeclaraciones>
       <ContenedorPrincipal>
       <Routes>
@@ -44,6 +48,12 @@ function App() {
         <Route path="/Reactivos" element ={
           <ProtectedRoute>
             <Reactivos/>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/Laboratorios" element ={
+          <ProtectedRoute>
+            <Laboratorios/>
           </ProtectedRoute>
         } />
 
@@ -81,6 +91,7 @@ function App() {
       </Routes>
       </ContenedorPrincipal>
       </AuthProviderDeclaraciones>
+      </AuthProviderLaboratorios>
       </AuthProviderReactivos>
     </AuthProvider>
   );

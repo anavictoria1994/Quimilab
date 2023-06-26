@@ -30,7 +30,7 @@ const StatementsList = () => {
     const openMenu = Boolean(anchorEl);
     const [open, setOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState(null)
-
+    const [cantidad, setCantidad] = useState(0)
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
       console.log(event.currentTarget)
@@ -54,7 +54,7 @@ const StatementsList = () => {
       { field: "place", headerName: "Espacio", width: 180 },
       {
         field: "containersQuantity",
-        headerName: "Cant. contenedores",
+        headerName: "Cant. generada (kg)",
         width: 150,
       },
       { field: "waste", headerName: "Residuos", width: 150 },
@@ -88,19 +88,28 @@ const StatementsList = () => {
               <MenuItem onClick={handleCloseMenu}>Otra</MenuItem>
             </Menu>
           </>
-        ),
+        ), 
       },
     ];
+
+    const sumaCantidadGenerada = (index) => {
+      let suma = 0
+      const array = statements[index].residuos
+      for (let i = 0; i < array.length; i++) {
+        suma += parseInt(array[i].cantidadGenerada)
+      }
+      return suma;
+    }
     const rows = statements.map((item,index)=>{
       return {
         id: index,
         shippingDate: new Date(item.fecha_creacion.seconds * 1000).toLocaleDateString("en-US"),
         stage:item.etapa,
         place:item.id_laboratorio,
-        containersQuantity:20,
+        containersQuantity: sumaCantidadGenerada(index),
         waste:item.residuos,
       }
-    })
+    }).sort()
     return (
       <Container sx={{ my: 3 }}>
         <Card elevation={5}>
@@ -153,6 +162,7 @@ const StatementsList = () => {
           </CardContent>
         </Card>
         <Dialog open={open} onClose={() => handleClose()} fullScreen sx={{mx:{xs: 4, md:20}, my:{xs:4,md:10}}}>
+          <Button  variant="text" style={{marginLeft:"auto", width:"2px",color:"black",fontWeight:"bold"}} onClick={()=>handleClose()}>X</Button>
           <DialogTitle sx={{ textAlign: "center" }}>
             Registro de declaraciones
           </DialogTitle>
